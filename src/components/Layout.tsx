@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { useAppStore } from '../store';
 import { 
-  Menu, X, LogOut, FileText, FileCheck, Mail, Receipt, 
+  Menu, LogOut, FileText, FileCheck, Mail, Receipt, 
   Image as ImageIcon, Tag, Shirt, Combine, Briefcase, 
   FormInput, BarChart3, ShoppingCart, ClipboardList, ShieldAlert
 } from 'lucide-react';
@@ -10,7 +10,6 @@ import {
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
   const { userRole, setUserRole } = useAppStore();
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     setUserRole(null);

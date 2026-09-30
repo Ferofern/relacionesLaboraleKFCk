@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Database, Plus, Trash2, Mail, Send } from 'lucide-react';
+import { Database, Plus, Trash2, Send } from 'lucide-react';
 import { mediator } from '../services/api';
 import { useAppStore } from '../store';
 
@@ -90,7 +90,7 @@ export default function MapeoCCO() {
         </div>
         
         <div className="p-4 space-y-3 bg-[var(--paper)]/30">
-          {ccos.map((c, i) => (
+          {ccos.map((c) => (
             <div key={c.id} className="flex gap-4 items-start bg-white p-4 rounded-lg border border-[var(--line)] shadow-sm">
               <div className="w-1/4">
                 <label className="block text-xs font-semibold text-[var(--muted)] mb-1">CÓDIGO CCO</label>

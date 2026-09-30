@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, FileText, Download, Receipt, X } from 'lucide-react';
+import { FileText, Download, Receipt, X } from 'lucide-react';
 import { mediator } from '../services/api';
 
 export default function ExtractorFacturas() {

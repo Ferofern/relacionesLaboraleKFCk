@@ -1,5 +1,5 @@
 export const mediator = {
-  process_iess_files: async (files: File[], onProgress: (p: number) => void) => {
+  process_iess_files: async (_files: File[], onProgress: (p: number) => void) => {
     for (let i = 0; i <= 100; i += 10) {
       await new Promise(r => setTimeout(r, 200));
       onProgress(i);
@@ -10,7 +10,7 @@ export const mediator = {
     ];
   },
   
-  process_validador_files: async (payroll: File, iessFiles: File[], onProgress: (p: number) => void) => {
+  process_validador_files: async (_payroll: File, _iessFiles: File[], onProgress: (p: number) => void) => {
     for (let i = 0; i <= 100; i += 10) {
       await new Promise(r => setTimeout(r, 250));
       onProgress(i);
@@ -41,7 +41,7 @@ export const mediator = {
     return ccos.map(c => ({ ...c, status: 'Procesado', emailTo: 'test@kfc.com' }));
   },
 
-  process_facturas_files: async (files: File[]) => {
+  process_facturas_files: async (_files: File[]) => {
     await new Promise(r => setTimeout(r, 1500));
     return [
       { proveedor: 'PROVEEDOR A', total: 1500.50, fecha: '2023-10-01' },
@@ -49,22 +49,22 @@ export const mediator = {
     ];
   },
 
-  process_claquetas_file: async (region: string, responsable: string, fecha: string, file: File) => {
+  process_claquetas_file: async (_region: string, _responsable: string, _fecha: string, _file: File) => {
     await new Promise(r => setTimeout(r, 2000));
     return 'URL_PDF_CLAQUETAS';
   },
 
-  process_stickers_file: async (file: File) => {
+  process_stickers_file: async (_file: File) => {
     await new Promise(r => setTimeout(r, 1000));
     return true;
   },
 
-  generate_stickers: async (cedulas: string[], formato: string) => {
+  generate_stickers: async (_cedulas: string[], _formato: string) => {
     await new Promise(r => setTimeout(r, 1500));
     return 'URL_PDF_STICKERS';
   },
 
-  process_dotacion_files: async (tipo: string, leccionario: File, stocks: File, fecha: string) => {
+  process_dotacion_files: async (_tipo: string, _leccionario: File, _stocks: File, _fecha: string) => {
     await new Promise(r => setTimeout(r, 2000));
     return [
       { empleado: 'JUAN PEREZ', dotacion: 'Camisa M', cantidad: 2 },
@@ -72,7 +72,7 @@ export const mediator = {
     ];
   },
 
-  process_unificar_pdfs: async (files: File[]) => {
+  process_unificar_pdfs: async (_files: File[]) => {
     await new Promise(r => setTimeout(r, 2000));
     return 'URL_PDF_UNIFICADO';
   },
@@ -90,17 +90,17 @@ export const mediator = {
     ];
   },
 
-  actualizar_proyecto: async (id: string, data: any) => {
+  actualizar_proyecto: async (_id: string, _data: any) => {
     await new Promise(r => setTimeout(r, 500));
     return true;
   },
 
-  actualizar_estado: async (id: string, estado: string) => {
+  actualizar_estado: async (_id: string, _estado: string) => {
     await new Promise(r => setTimeout(r, 500));
     return true;
   },
 
-  generar_pdf_claqueta: async (id: string) => {
+  generar_pdf_claqueta: async (_id: string) => {
     await new Promise(r => setTimeout(r, 1000));
     return 'URL_PDF_CLAQUETA_PROYECTO';
   },
@@ -157,12 +157,12 @@ export const mediator = {
     ];
   },
 
-  guardar_pedido: async (carrito: any[]) => {
+  guardar_pedido: async (_carrito: any[]) => {
     await new Promise(r => setTimeout(r, 1500));
     return true;
   },
 
-  obtener_reporte_general_articulos: async (mes: string, anio: string) => {
+  obtener_reporte_general_articulos: async (_mes: string, _anio: string) => {
     await new Promise(r => setTimeout(r, 1000));
     return [
       { articulo: 'Esferos Azules', total_solicitado: 50 },
@@ -170,7 +170,7 @@ export const mediator = {
     ];
   },
 
-  obtener_reporte_por_persona: async (mes: string, anio: string) => {
+  obtener_reporte_por_persona: async (_mes: string, _anio: string) => {
     await new Promise(r => setTimeout(r, 1000));
     return [
       { persona: 'JUAN PEREZ', articulo: 'Esferos Azules', cantidad: 2 },

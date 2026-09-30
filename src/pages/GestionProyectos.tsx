@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Briefcase, Calendar, Image as ImageIcon, Send, FileText, CheckCircle, Edit, Search } from 'lucide-react';
+import { Briefcase, Image as ImageIcon, Send, FileText, CheckCircle, Edit, Search } from 'lucide-react';
 import { mediator } from '../services/api';
 
 export default function GestionProyectos() {

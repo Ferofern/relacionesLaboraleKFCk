@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, Shirt, Download, FileSpreadsheet } from 'lucide-react';
+import { Upload, Shirt, Download } from 'lucide-react';
 import { mediator } from '../services/api';
 
 export default function GeneradorDotaciones() {

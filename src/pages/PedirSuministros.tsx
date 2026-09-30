@@ -168,7 +168,7 @@ export default function PedirSuministros() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sinImagen.map((item, i) => (
+                  {sinImagen.map((item) => (
                     <tr key={item.id} className="border-b border-[var(--line)] hover:bg-[var(--paper)] transition-colors">
                       <td className="px-6 py-3 font-medium text-[var(--ink)]">{item.nombre}</td>
                       <td className="px-6 py-3">
