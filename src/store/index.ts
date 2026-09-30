@@ -7,6 +7,7 @@ interface SuministroItem {
   nombre: string;
   variante: string;
   cantidad: number;
+  imagen?: string;
 }
 
 interface StickersData {
