@@ -178,7 +178,23 @@ export const mediator = {
     return false;
   },
   obtener_catalogo: async () => {
-    return [];
+    // Importa todas las imágenes estáticas a través del bundler de Vite
+    const imagesGlob = import.meta.glob('../../suministros/*.png', { eager: true, import: 'default' });
+    
+    const catalogoLocal = Object.entries(imagesGlob).map(([path, url], index) => {
+      // Extrae el nombre del archivo sin la extensión y lo limpia un poco
+      let nombreBase = path.split('/').pop()?.replace('.png', '') || `Articulo ${index + 1}`;
+      nombreBase = nombreBase.replace(/-/g, ' ');
+
+      return {
+        id: `sum-${index + 1}`,
+        nombre: nombreBase,
+        imagen: url as string,
+        variantes: ['Unidad'] // Variantes por defecto para insumos importados dinámicamente
+      };
+    });
+    
+    return catalogoLocal;
   },
   guardar_pedido: async (carrito: any[]) => {
     return true;
