@@ -11,19 +11,6 @@ import GestionProyectos from './pages/GestionProyectos';
 import DashboardMetricas from './pages/DashboardMetricas';
 import PedirSuministros from './pages/PedirSuministros';
 import ReportesSuministros from './pages/ReportesSuministros';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useAppStore } from './store';
-import Layout from './components/Layout';
-import ExtractorIess from './pages/ExtractorIess';
-import ValidadorIess from './pages/ValidadorIess';
-import MapeoCCO from './pages/MapeoCCO';
-import ExtractorFacturas from './pages/ExtractorFacturas';
-import GeneradorStickers from './pages/GeneradorStickers';
-import GeneradorDotaciones from './pages/GeneradorDotaciones';
-import GestionProyectos from './pages/GestionProyectos';
-import DashboardMetricas from './pages/DashboardMetricas';
-import PedirSuministros from './pages/PedirSuministros';
-import ReportesSuministros from './pages/ReportesSuministros';
 import Login from './pages/Login';
 
 // Componente para proteger las rutas basado en los módulos autorizados del usuario

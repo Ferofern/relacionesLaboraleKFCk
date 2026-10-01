@@ -15,7 +15,19 @@ export default function Layout() {
     setUser(null);
   };
 
-  const modules = [
+  type ModuleItem = {
+    path: string;
+    name: string;
+    icon: JSX.Element;
+    alwaysShow?: boolean;
+  };
+
+  type ModuleCategory = {
+    category: string;
+    items: ModuleItem[];
+  };
+
+  const modules: ModuleCategory[] = [
     {
       category: 'Nómina e IESS',
       items: [
