@@ -1,0 +1,119 @@
+======================================================================
+INSTRUCCIONES DE INTEGRACIÓN FRONTEND - BACKEND
+PROYECTO: Utilitarios Grupo KFC
+======================================================================
+
+1. CONTEXTO Y ESTADO ACTUAL
+----------------------------------------------------------------------
+Los desarrolladores del Backend ya han creado toda la lógica de negocio 
+necesaria a nivel de base de datos en los siguientes módulos:
+- SuministrosPedidosLogic
+- SuministrosReportesLogic
+- FormulariosLogic
+- AutomationLogic
+
+Sin embargo, estos módulos NO ESTÁN EXPUESTOS mediante endpoints en el 
+archivo principal de FastAPI (`main.py`). El Frontend, desarrollado en React,
+ya está configurado para consumir estas rutas. 
+
+Objetivo: Los desarrolladores Backend deben abrir el archivo `main.py` y
+pegar el bloque de código provisto en el Punto 3 de este documento.
+
+
+2. CONTRATO DE CONEXIÓN FRONTEND (Rutas que espera React)
+----------------------------------------------------------------------
+El Frontend (en `src/services/api.ts`) realizará las siguientes peticiones
+HTTP. El Backend debe asegurar que coincidan con estos métodos y rutas:
+
+- Suministros (Pedidos):
+  GET  /api/suministros/catalogo
+  GET  /api/suministros/verificar-pedido?correo=...&mes=...&anio=...
+  POST /api/suministros/pedido
+       Payload (JSON): { "correo": "", "nombre": "", "mes": X, "anio": Y, "carrito": {"ArtA": 1} }
+
+- Suministros (Reportes):
+  GET  /api/suministros/reportes/general?mes=...&anio=...
+  GET  /api/suministros/reportes/persona?mes=...&anio=...&correo=...
+
+- Formularios:
+  GET  /api/formularios/actualizacion-academica
+
+- Dashboard:
+  GET  /api/dashboard/reporte-pdf
+
+
+3. CÓDIGO A IMPLEMENTAR EN EL BACKEND (main.py)
+----------------------------------------------------------------------
+COPIAR Y PEGAR el siguiente código al final del archivo `main.py`, justo 
+debajo del endpoint existente `@app.post("/api/cco/procesar")`:
+
+```python
+# ==========================================
+# ENDPOINTS DE SUMINISTROS
+# ==========================================
+@app.get("/api/suministros/catalogo")
+async def obtener_catalogo_suministros():
+    catalogo, otros = mediator.suministros_pedidos_logic.obtener_catalogo()
+    return {"catalogo": catalogo, "otros": otros}
+
+@app.get("/api/suministros/verificar-pedido")
+async def verificar_pedido(correo: str, mes: str, anio: str):
+    existe = mediator.suministros_pedidos_logic.verificar_pedido_mes(correo, mes, anio)
+    return {"existe": existe}
+
+@app.post("/api/suministros/pedido")
+async def guardar_pedido(payload: dict):
+    # Payload esperado: {"correo": "...", "nombre": "...", "mes": 10, "anio": 2026, "carrito": {"Articulo A": 2}}
+    correo = payload.get("correo")
+    nombre = payload.get("nombre")
+    mes = payload.get("mes")
+    anio = payload.get("anio")
+    carrito = payload.get("carrito", {})
+    
+    mediator.suministros_pedidos_logic.guardar_pedido(correo, nombre, mes, anio, carrito)
+    return {"message": "Pedido guardado con éxito"}
+
+@app.get("/api/suministros/reportes/general")
+async def reporte_suministros_general(mes: str, anio: str):
+    df = mediator.suministros_reportes_logic.obtener_reporte_general_articulos(mes, anio)
+    return JSONResponse(content=df.to_dict(orient="records"))
+
+@app.get("/api/suministros/reportes/persona")
+async def reporte_suministros_persona(mes: str, anio: str, correo: Optional[str] = None):
+    df = mediator.suministros_reportes_logic.obtener_reporte_por_persona(mes, anio, correo)
+    return JSONResponse(content=df.to_dict(orient="records"))
+
+# ==========================================
+# ENDPOINT DE FORMULARIOS ACADÉMICOS
+# ==========================================
+@app.get("/api/formularios/actualizacion-academica")
+async def obtener_formularios():
+    datos = mediator.formularios_logic.obtener_actualizacion_academica()
+    return {"data": datos}
+
+# ==========================================
+# ENDPOINT DE PDF DASHBOARD (MÉTRICAS)
+# ==========================================
+@app.get("/api/dashboard/reporte-pdf")
+async def generar_reporte_dashboard():
+    datos_dashboard = mediator.automation_logic.obtener_dashboard_completo()
+    pdf_bytes = mediator.automation_logic.generar_reporte_ejecutivo_pdf(datos_dashboard)
+    
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=Reporte_Ejecutivo_Automatizaciones.pdf"}
+    )
+```
+
+4. NOTAS ADICIONALES PARA BACKEND DEVS
+----------------------------------------------------------------------
+- Todos estos métodos Python invocados arriba (`obtener_catalogo`, etc.) 
+  ya existen y operan correctamente en sus respectivos archivos dentro
+  de la carpeta `modulos/` y están instanciados en `AppMediator`.
+- En caso de que se necesite importar `JSONResponse`, `Optional` o `io`,
+  asegurarse de que la cabecera de `main.py` los tenga incluidos. (Ya están
+  en el código base que enviaron).
+- Módulo faltante: Actualmente no existe en el Backend un archivo ni clase 
+  encargada de la lógica de "Unificar PDFs". El Frontend mantiene este módulo 
+  simulado (mock) para evitar crashes, hasta que se construya la lógica en Python.
