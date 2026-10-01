@@ -20,7 +20,7 @@ export default function PedirSuministros() {
     const data = await mediator.obtener_catalogo();
     setCatalogo(data);
     const initialSelections: any = {};
-    data.forEach(item => {
+    data.forEach((item: any) => {
       initialSelections[item.id] = { variante: item.variantes[0], cantidad: 1 };
     });
     setLocalSelections(initialSelections);
