@@ -57,6 +57,7 @@ export default function Layout() {
       category: 'Gestión y Proyectos',
       items: [
         { path: '/gestion-proyectos', name: 'Gestión de Proyectos', dbName: 'Gestion de Proyectos', icon: <Briefcase size={18} /> },
+        { path: '/visor-formularios', name: 'Visor de Formularios', dbName: 'Visor de Formularios', icon: <FormInput size={18} /> },
       ]
     },
     {
