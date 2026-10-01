@@ -18,6 +18,7 @@ export default function Layout() {
   type ModuleItem = {
     path: string;
     name: string;
+    dbName?: string; // Optional property to match DB exactly
     icon: JSX.Element;
     alwaysShow?: boolean;
   };
@@ -33,34 +34,34 @@ export default function Layout() {
       items: [
         { path: '/extractor-iess', name: 'Extractor IESS', icon: <FileText size={18} /> },
         { path: '/validador-iess', name: 'Validador IESS vs Payroll', icon: <FileCheck size={18} /> },
-        { path: '/mapeo-cco', name: 'Mapeo CCO (Liquidación)', icon: <Mail size={18} /> },
+        { path: '/mapeo-cco', name: 'Mapeo CCO (Liquidación)', dbName: 'Mapeo de Cargos CCO', icon: <Mail size={18} /> },
       ]
     },
     {
       category: 'Documentos y Generadores',
       items: [
-        { path: '/extractor-facturas', name: 'Extractor Facturas', icon: <Receipt size={18} /> },
-        { path: '/generador-stickers', name: 'Generador Stickers', icon: <Tag size={18} /> },
-        { path: '/generador-dotaciones', name: 'Generador Uniformes BOT SAP', icon: <Shirt size={18} /> },
+        { path: '/extractor-facturas', name: 'Extractor Facturas', dbName: 'Extractor de Facturas', icon: <Receipt size={18} /> },
+        { path: '/generador-stickers', name: 'Generador Stickers', dbName: 'Generador de Stickers', icon: <Tag size={18} /> },
+        { path: '/generador-dotaciones', name: 'Generador Uniformes BOT SAP', dbName: 'Generador de Dotaciones', icon: <Shirt size={18} /> },
       ]
     },
     {
       category: 'Suministros Corporativos',
       items: [
         { path: '/pedir-suministros', name: 'Pedir Suministros', icon: <ShoppingCart size={18} /> },
-        { path: '/reportes-suministros', name: 'Reportes Suministros', icon: <ClipboardList size={18} /> },
+        { path: '/reportes-suministros', name: 'Reportes Suministros', dbName: 'Reporte de Suministros', icon: <ClipboardList size={18} /> },
       ]
     },
     {
       category: 'Gestión y Proyectos',
       items: [
-        { path: '/gestion-proyectos', name: 'Gestión de Proyectos', icon: <Briefcase size={18} /> },
+        { path: '/gestion-proyectos', name: 'Gestión de Proyectos', dbName: 'Gestion de Proyectos', icon: <Briefcase size={18} /> },
       ]
     },
     {
       category: 'Analítica y Dashboards',
       items: [
-        { path: '/dashboard', name: 'Dashboard Métricas', icon: <BarChart3 size={18} />, alwaysShow: true },
+        { path: '/dashboard', name: 'Dashboard Métricas', dbName: 'Dashboard de Metricas', icon: <BarChart3 size={18} /> },
       ]
     }
   ];
@@ -68,8 +69,10 @@ export default function Layout() {
   // Filtramos los módulos según los permisos del usuario
   const filteredModules = modules.map(category => {
     const filteredItems = category.items.filter(item => {
-      // Mostrar si tiene alwaysShow (ej. Dashboard) o si su nombre está en los módulos autorizados del usuario
-      return item.alwaysShow || (user?.modulos && user.modulos.includes(item.name));
+      // Usar dbName si existe, sino el name normal
+      const checkName = item.dbName || item.name;
+      // Mostrar si tiene alwaysShow (ej. Dashboard si fuera público) o si su nombre está en los módulos autorizados del usuario
+      return item.alwaysShow || (user?.modulos && user.modulos.includes(checkName));
     });
     return { ...category, items: filteredItems };
   }).filter(category => category.items.length > 0);

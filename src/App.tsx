@@ -51,19 +51,18 @@ function App() {
           
           <Route path="extractor-iess" element={<ProtectedRoute moduleName="Extractor IESS"><ExtractorIess /></ProtectedRoute>} />
           <Route path="validador-iess" element={<ProtectedRoute moduleName="Validador IESS vs Payroll"><ValidadorIess /></ProtectedRoute>} />
-          <Route path="mapeo-cco" element={<ProtectedRoute moduleName="Mapeo CCO (Liquidación)"><MapeoCCO /></ProtectedRoute>} />
+          <Route path="mapeo-cco" element={<ProtectedRoute moduleName="Mapeo de Cargos CCO"><MapeoCCO /></ProtectedRoute>} />
           
-          <Route path="extractor-facturas" element={<ProtectedRoute moduleName="Extractor Facturas"><ExtractorFacturas /></ProtectedRoute>} />
-          <Route path="generador-stickers" element={<ProtectedRoute moduleName="Generador Stickers"><GeneradorStickers /></ProtectedRoute>} />
-          <Route path="generador-dotaciones" element={<ProtectedRoute moduleName="Generador Uniformes BOT SAP"><GeneradorDotaciones /></ProtectedRoute>} />
+          <Route path="extractor-facturas" element={<ProtectedRoute moduleName="Extractor de Facturas"><ExtractorFacturas /></ProtectedRoute>} />
+          <Route path="generador-stickers" element={<ProtectedRoute moduleName="Generador de Stickers"><GeneradorStickers /></ProtectedRoute>} />
+          <Route path="generador-dotaciones" element={<ProtectedRoute moduleName="Generador de Dotaciones"><GeneradorDotaciones /></ProtectedRoute>} />
           
           <Route path="pedir-suministros" element={<ProtectedRoute moduleName="Pedir Suministros"><PedirSuministros /></ProtectedRoute>} />
-          <Route path="reportes-suministros" element={<ProtectedRoute moduleName="Reportes Suministros"><ReportesSuministros /></ProtectedRoute>} />
+          <Route path="reportes-suministros" element={<ProtectedRoute moduleName="Reporte de Suministros"><ReportesSuministros /></ProtectedRoute>} />
           
-          <Route path="gestion-proyectos" element={<ProtectedRoute moduleName="Gestión de Proyectos"><GestionProyectos /></ProtectedRoute>} />
+          <Route path="gestion-proyectos" element={<ProtectedRoute moduleName="Gestion de Proyectos"><GestionProyectos /></ProtectedRoute>} />
           
-          {/* Dashboard generalmente es público para todos los usuarios autenticados */}
-          <Route path="dashboard" element={<ProtectedRoute><DashboardMetricas /></ProtectedRoute>} />
+          <Route path="dashboard" element={<ProtectedRoute moduleName="Dashboard de Metricas"><DashboardMetricas /></ProtectedRoute>} />
           
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
