@@ -9,6 +9,8 @@ import GeneradorStickers from './pages/GeneradorStickers';
 import GeneradorDotaciones from './pages/GeneradorDotaciones';
 import GestionProyectos from './pages/GestionProyectos';
 import DashboardMetricas from './pages/DashboardMetricas';
+import PedirSuministros from './pages/PedirSuministros';
+import ReportesSuministros from './pages/ReportesSuministros';
 import { Shield } from 'lucide-react';
 
 function Login() {
@@ -73,6 +75,9 @@ function App() {
           <Route path="extractor-facturas" element={<ExtractorFacturas />} />
           <Route path="generador-stickers" element={<GeneradorStickers />} />
           <Route path="generador-dotaciones" element={<GeneradorDotaciones />} />
+          
+          <Route path="pedir-suministros" element={<PedirSuministros />} />
+          <Route path="reportes-suministros" element={<ReportesSuministros />} />
           
           <Route path="gestion-proyectos" element={<GestionProyectos />} />
           

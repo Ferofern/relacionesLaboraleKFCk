@@ -33,6 +33,13 @@ export default function Layout() {
       ]
     },
     {
+      category: 'Suministros Corporativos',
+      items: [
+        { path: '/pedir-suministros', name: 'Pedir Suministros', icon: <ShoppingCart size={18} /> },
+        { path: '/reportes-suministros', name: 'Reportes Suministros', icon: <ClipboardList size={18} /> },
+      ]
+    },
+    {
       category: 'Gestión y Proyectos',
       roles: ['Administrador', 'Aprobador'],
       items: [
