@@ -59,11 +59,12 @@
 .nav-item.active span { color: #ef4056; }
 .pulse-dot { background: #c8102e; box-shadow: 0 0 0 5px rgba(200,16,46,.14); }
 .topbar h1 em { color: #c8102e; font-style: normal; font-weight: inherit; }
-.file-action span, .download-all { background: #c8102e; }
-.file-action.secondary span { background: #242122; }
+.file-action, .download-all { background: #c8102e; }
+.file-action.secondary { background: #242122; }
 .upload-icon, .upload-card:nth-child(2) .upload-icon { background: #fbeaec; color: #c8102e; }
 .status-pill.ready i { background: #c8102e; }
 .download-all span { color: #fff; }
+.generate-btn { background: var(--navy); }
 .generate-btn:not(:disabled):hover { background: #c8102e; }
 .demo-banner { border-color: #efc7ce; background: linear-gradient(90deg, #fff, #fff4f5); color: #382f31; }
 .demo-banner span { background: #c8102e; }
