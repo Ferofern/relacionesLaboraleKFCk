@@ -27,7 +27,7 @@ export default function GeneradorDotaciones() {
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--ink)]">Generador de Dotaciones</h2>
+        <h2 className="text-2xl font-bold text-[var(--ink)]">Generador Uniformes BOT SAP</h2>
         <p className="text-[var(--muted)] mt-1">Cálculo y asignación de uniformes en base a leccionarios y stocks.</p>
       </div>
 
@@ -98,7 +98,7 @@ export default function GeneradorDotaciones() {
             className="generate-btn text-white px-6 py-2.5 rounded-lg font-medium flex items-center space-x-2 disabled:opacity-50 transition-colors shadow-sm"
           >
             <Shirt size={18} />
-            <span>{isProcessing ? 'Procesando...' : 'Procesar Archivos de Dotaciones'}</span>
+            <span>{isProcessing ? 'Procesando...' : 'Procesar Archivos de Uniformes'}</span>
           </button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function GeneradorDotaciones() {
       {results.length > 0 && !isProcessing && (
         <div className="bg-white rounded-xl shadow-sm border border-[var(--line)] overflow-hidden">
           <div className="p-4 border-b border-[var(--line)] flex justify-between items-center bg-[var(--paper)]">
-            <h3 className="font-semibold text-[var(--ink)]">Vista Previa de Dotaciones</h3>
+            <h3 className="font-semibold text-[var(--ink)]">Vista Previa de Uniformes</h3>
             <button className="download-all flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-opacity hover:opacity-90">
               <Download size={16} />
               <span>Descargar Matriz Salida (.xlsx)</span>
