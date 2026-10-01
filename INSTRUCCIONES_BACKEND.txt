@@ -104,6 +104,15 @@ async def generar_reporte_dashboard():
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=Reporte_Ejecutivo_Automatizaciones.pdf"}
     )
+
+# ==========================================
+# ENDPOINT PARA CARGAR BASE DE STICKERS
+# ==========================================
+@app.post("/api/stickers/cargar")
+async def cargar_base_stickers(archivo: UploadFile = File(...)):
+    mock_file = StreamlitFileMock(archivo)
+    data = mediator.process_stickers_file(mock_file)
+    return {"data": data}
 ```
 
 4. NOTAS ADICIONALES PARA BACKEND DEVS

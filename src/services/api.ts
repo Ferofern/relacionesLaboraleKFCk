@@ -226,9 +226,18 @@ export const mediator = {
   // MÉTODOS MOCK RESTAURADOS PARA EVITAR CRASHES DEL UI (El backend aún no los tiene)
   // ==========================================
   get_nombre_by_cedula: async (cedula: string) => {
+    if ((window as any).stickersDatabase && (window as any).stickersDatabase[cedula]) {
+      return (window as any).stickersDatabase[cedula].Nombre || 'Desconocido';
+    }
     return 'Desconocido';
   },
   process_stickers_file: async (file: File) => {
+    const formData = new FormData();
+    formData.append('archivo', file);
+    const res = await fetch(`${API_URL}/api/stickers/cargar`, { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Error procesando base de stickers');
+    const data = await res.json();
+    (window as any).stickersDatabase = data.data; // Guardamos en memoria global (o módulo)
     return true;
   },
   process_unificar_pdfs: async (files: File[]) => {

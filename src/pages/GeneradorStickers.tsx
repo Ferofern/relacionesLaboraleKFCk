@@ -14,7 +14,8 @@ export default function GeneradorStickers() {
 
   const handleAddIndividual = async () => {
     if (cedulaInput.length === 10) {
-      addSticker({ cedula: cedulaInput, nombre: '' });
+      const nombre = await mediator.get_nombre_by_cedula(cedulaInput);
+      addSticker({ cedula: cedulaInput, nombre });
       setCedulaInput('');
     }
   };
@@ -22,7 +23,8 @@ export default function GeneradorStickers() {
   const handleAddMasivo = async () => {
     const cedulas = masivoInput.split('\n').map(c => c.trim()).filter(c => c.length === 10);
     for (const ced of cedulas) {
-      addSticker({ cedula: ced, nombre: '' });
+      const nombre = await mediator.get_nombre_by_cedula(ced);
+      addSticker({ cedula: ced, nombre });
     }
     setMasivoInput('');
   };
@@ -47,6 +49,23 @@ export default function GeneradorStickers() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-[var(--line)]">
+            <h3 className="font-semibold text-[var(--ink)] mb-3">Cargar Base (Excel)</h3>
+            <div 
+              onClick={() => fileRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-colors ${baseLoaded ? 'border-[var(--cyan)] bg-[var(--cyan)]/10' : 'border-[var(--line)] hover:border-[var(--cyan)] bg-[var(--paper)]'}`}
+            >
+              <input type="file" accept=".xlsx,.xls" className="hidden" ref={fileRef} onChange={async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                  const data = await mediator.process_stickers_file(e.target.files[0]);
+                  setBaseLoaded(true);
+                }
+              }} />
+              <Upload className={baseLoaded ? 'text-[var(--cyan)] mb-2' : 'text-[var(--muted)] mb-2'} size={24} />
+              <span className="text-sm font-medium text-center">{baseLoaded ? 'Base Cargada' : 'Seleccionar Excel'}</span>
+            </div>
+          </div>
+
           <div className="bg-white p-5 rounded-xl shadow-sm border border-[var(--line)]">
             <h3 className="font-semibold text-[var(--ink)] mb-3">Formato de Etiqueta</h3>
             <div className="flex gap-4">
