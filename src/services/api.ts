@@ -198,14 +198,7 @@ export const mediator = {
   obtener_reporte_por_persona: async (mes: string, anio: string) => {
     const res = await fetch(`${API_URL}/api/suministros/reportes/persona?mes=${mes}&anio=${anio}`);
     if (!res.ok) throw new Error('Error obteniendo reporte por persona');
-    const data = await res.json();
-    // Agrupar por persona para la gráfica
-    const agrupado: any = {};
-    data.forEach((d: any) => {
-      const persona = d.Solicitante;
-      agrupado[persona] = (agrupado[persona] || 0) + d.Cantidad;
-    });
-    return Object.keys(agrupado).map(persona => ({ persona, items: agrupado[persona] }));
+    return await res.json();
   },
 
   obtener_actualizacion_academica: async () => {
