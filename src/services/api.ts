@@ -154,6 +154,89 @@ export const mediator = {
     if (!res.ok) throw new Error('Error procesando CCO');
     return res.json();
   },
+
+  // ==========================================
+  // CONEXIONES A LOS NUEVOS MÓDULOS DEL BACKEND (Suministros y Formularios)
+  // ==========================================
+  obtener_catalogo: async () => {
+    const res = await fetch(`${API_URL}/api/suministros/catalogo`);
+    if (!res.ok) throw new Error('Error obteniendo catálogo');
+    const data = await res.json();
+    return data.catalogo; // Retorna solo el catálogo de imágenes
+  },
+
+  verificar_pedido_mes: async (correo: string = 'test@kfc.com.ec', mes: string = new Date().getMonth() + 1 + '', anio: string = new Date().getFullYear() + '') => {
+    const res = await fetch(`${API_URL}/api/suministros/verificar-pedido?correo=${correo}&mes=${mes}&anio=${anio}`);
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.existe;
+  },
+
+  guardar_pedido: async (carrito: any[], correo: string = 'test@kfc.com.ec', nombre: string = 'Test Usuario') => {
+    const mes = new Date().getMonth() + 1;
+    const anio = new Date().getFullYear();
+    const payload = {
+      correo, nombre, mes, anio,
+      carrito: carrito.reduce((acc, curr) => ({ ...acc, [curr.nombre]: curr.cantidad }), {})
+    };
+    const res = await fetch(`${API_URL}/api/suministros/pedido`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Error guardando pedido');
+    return res.json();
+  },
+
+  obtener_reporte_general_articulos: async (mes: string, anio: string) => {
+    const res = await fetch(`${API_URL}/api/suministros/reportes/general?mes=${mes}&anio=${anio}`);
+    if (!res.ok) throw new Error('Error obteniendo reporte');
+    const data = await res.json();
+    return data.map((d: any) => ({ articulo: d.Articulo, cantidad: d['Cantidad Total Pedida'] }));
+  },
+
+  obtener_reporte_por_persona: async (mes: string, anio: string) => {
+    const res = await fetch(`${API_URL}/api/suministros/reportes/persona?mes=${mes}&anio=${anio}`);
+    if (!res.ok) throw new Error('Error obteniendo reporte por persona');
+    const data = await res.json();
+    // Agrupar por persona para la gráfica
+    const agrupado: any = {};
+    data.forEach((d: any) => {
+      const persona = d.Solicitante;
+      agrupado[persona] = (agrupado[persona] || 0) + d.Cantidad;
+    });
+    return Object.keys(agrupado).map(persona => ({ persona, items: agrupado[persona] }));
+  },
+
+  obtener_actualizacion_academica: async () => {
+    const res = await fetch(`${API_URL}/api/formularios/actualizacion-academica`);
+    if (!res.ok) throw new Error('Error obteniendo formularios');
+    return res.json();
+  },
+
+  generar_reporte_ejecutivo_pdf: async () => {
+    const res = await fetch(`${API_URL}/api/dashboard/reporte-pdf`);
+    if (!res.ok) throw new Error('Error generando reporte');
+    const blob = await res.blob();
+    downloadBlob(blob, 'Reporte_Ejecutivo_Automatizaciones.pdf');
+    return 'descargado';
+  },
+
+  // ==========================================
+  // MÉTODOS MOCK RESTAURADOS PARA EVITAR CRASHES DEL UI (El backend aún no los tiene)
+  // ==========================================
+  get_nombre_by_cedula: async (cedula: string) => {
+    return 'Desconocido';
+  },
+  process_stickers_file: async (file: File) => {
+    return true;
+  },
+  process_unificar_pdfs: async (files: File[]) => {
+    return 'URL_PDF_UNIFICADO';
+  },
+  obtener_metricas: async () => {
+    return { ahorro: '$0', optimizacion: '0%', alcance: '0 Empleados' };
+  },
   downloadFile: (url: string, filename: string) => {
     const a = document.createElement('a');
     a.href = url.startsWith('http') ? url : `${API_URL}/${url}`;
