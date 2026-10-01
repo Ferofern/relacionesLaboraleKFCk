@@ -31,7 +31,6 @@ export default function Layout() {
         { path: '/generador-claquetas', name: 'Generador Claquetas', icon: <ImageIcon size={18} /> },
         { path: '/generador-stickers', name: 'Generador Stickers', icon: <Tag size={18} /> },
         { path: '/generador-dotaciones', name: 'Generador Dotaciones', icon: <Shirt size={18} /> },
-        { path: '/unificador-pdfs', name: 'Unificador PDFs', icon: <Combine size={18} /> },
       ]
     },
     {
@@ -42,19 +41,9 @@ export default function Layout() {
       ]
     },
     {
-      category: 'Analítica y Formularios',
+      category: 'Analítica y Dashboards',
       items: [
-        { path: '/visor-formularios', name: 'Visor Formularios', icon: <FormInput size={18} /> },
         { path: '/dashboard', name: 'Dashboard Métricas', icon: <BarChart3 size={18} /> },
-      ]
-    },
-    {
-      category: 'Suministros e Inventario',
-      items: [
-        { path: '/pedir-suministros', name: 'Pedir Suministros', icon: <ShoppingCart size={18} /> },
-        ...(userRole === 'Administrador' || userRole === 'Aprobador' ? [
-          { path: '/reporte-suministros', name: 'Reporte Suministros', icon: <ClipboardList size={18} /> }
-        ] : []),
       ]
     }
   ];

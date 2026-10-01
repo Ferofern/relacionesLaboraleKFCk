@@ -12,17 +12,9 @@ export default function GeneradorStickers() {
   const [isProcessing, setIsProcessing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const loadBase = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      await mediator.process_stickers_file(e.target.files[0]);
-      setBaseLoaded(true);
-    }
-  };
-
   const handleAddIndividual = async () => {
     if (cedulaInput.length === 10) {
-      const nombre = await mediator.get_nombre_by_cedula(cedulaInput);
-      addSticker({ cedula: cedulaInput, nombre });
+      addSticker({ cedula: cedulaInput, nombre: '' });
       setCedulaInput('');
     }
   };
@@ -30,8 +22,7 @@ export default function GeneradorStickers() {
   const handleAddMasivo = async () => {
     const cedulas = masivoInput.split('\n').map(c => c.trim()).filter(c => c.length === 10);
     for (const ced of cedulas) {
-      const nombre = await mediator.get_nombre_by_cedula(ced);
-      addSticker({ cedula: ced, nombre });
+      addSticker({ cedula: ced, nombre: '' });
     }
     setMasivoInput('');
   };
@@ -51,13 +42,6 @@ export default function GeneradorStickers() {
         <div>
           <h2 className="text-2xl font-bold text-[var(--ink)]">Generador de Stickers</h2>
           <p className="text-[var(--muted)] mt-1">Impresión de etiquetas con formato Costa/Sierra basadas en la matriz principal.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <input type="file" ref={fileRef} onChange={loadBase} accept=".xlsx" className="hidden" />
-          <button onClick={() => fileRef.current?.click()} className="flex items-center gap-2 bg-[var(--paper)] border border-[var(--line)] text-[var(--ink)] px-4 py-2 rounded-lg font-medium hover:border-[var(--cyan)] transition-colors">
-            <Upload size={16} className="text-[var(--cyan)]" /> Cargar Base Excel
-          </button>
-          {baseLoaded && <span className="status-pill ready text-xs font-bold px-3 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-2"><i className="w-2 h-2 rounded-full"></i> Base Lista</span>}
         </div>
       </div>
 

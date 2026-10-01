@@ -8,12 +8,8 @@ import ExtractorFacturas from './pages/ExtractorFacturas';
 import GeneradorClaquetas from './pages/GeneradorClaquetas';
 import GeneradorStickers from './pages/GeneradorStickers';
 import GeneradorDotaciones from './pages/GeneradorDotaciones';
-import UnificadorPdfs from './pages/UnificadorPdfs';
 import GestionProyectos from './pages/GestionProyectos';
-import VisorFormularios from './pages/VisorFormularios';
 import DashboardMetricas from './pages/DashboardMetricas';
-import PedirSuministros from './pages/PedirSuministros';
-import ReporteSuministros from './pages/ReporteSuministros';
 import { Shield } from 'lucide-react';
 
 function Login() {
@@ -79,15 +75,10 @@ function App() {
           <Route path="generador-claquetas" element={<GeneradorClaquetas />} />
           <Route path="generador-stickers" element={<GeneradorStickers />} />
           <Route path="generador-dotaciones" element={<GeneradorDotaciones />} />
-          <Route path="unificador-pdfs" element={<UnificadorPdfs />} />
           
           <Route path="gestion-proyectos" element={<GestionProyectos />} />
           
-          <Route path="visor-formularios" element={<VisorFormularios />} />
           <Route path="dashboard" element={<DashboardMetricas />} />
-          
-          <Route path="pedir-suministros" element={<PedirSuministros />} />
-          <Route path="reporte-suministros" element={<ReporteSuministros />} />
         </Route>
       </Routes>
     </Router>

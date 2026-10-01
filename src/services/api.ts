@@ -143,9 +143,6 @@ export const mediator = {
     return res.json();
   },
 
-  // ==========================================
-  // OTROS MÉTODOS MANTENIDOS PARA EVITAR CRASHES DEL UI (No especificados en el backend)
-  // ==========================================
   procesar_cco: async (payroll: File, cco: string, cedula_ex: string, nombre_ex: string, fecha_liq: string) => {
     const formData = new FormData();
     formData.append('archivo_payroll', payroll);
@@ -156,55 +153,6 @@ export const mediator = {
     const res = await fetch(`${API_URL}/api/cco/procesar`, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Error procesando CCO');
     return res.json();
-  },
-  process_stickers_file: async (file: File) => {
-    return true;
-  },
-  process_unificar_pdfs: async (files: File[]) => {
-    return 'URL_PDF_UNIFICADO';
-  },
-  generar_pdf_claqueta: async (id: string) => {
-    return 'URL_PDF_CLAQUETA_PROYECTO';
-  },
-  obtener_actualizacion_academica: async () => {
-    return { kpis: { total: 0, culminados: 0, enCurso: 0 }, data: [] };
-  },
-  obtener_metricas: async () => {
-    return { ahorro: '$0', optimizacion: '0%', alcance: '0 Empleados' };
-  },
-  generar_reporte_ejecutivo_pdf: async () => {
-    return 'URL_REPORTE_EJECUTIVO';
-  },
-  verificar_pedido_mes: async () => {
-    return false;
-  },
-  obtener_catalogo: async () => {
-    // Importa todas las imágenes estáticas a través del bundler de Vite
-    const imagesGlob = import.meta.glob('../../suministros/*.png', { eager: true, import: 'default' });
-    
-    const catalogoLocal = Object.entries(imagesGlob).map(([path, url], index) => {
-      // Extrae el nombre del archivo sin la extensión y lo limpia un poco
-      let nombreBase = path.split('/').pop()?.replace('.png', '') || `Articulo ${index + 1}`;
-      nombreBase = nombreBase.replace(/-/g, ' ');
-
-      return {
-        id: `sum-${index + 1}`,
-        nombre: nombreBase,
-        imagen: url as string,
-        variantes: ['Unidad'] // Variantes por defecto para insumos importados dinámicamente
-      };
-    });
-    
-    return catalogoLocal;
-  },
-  guardar_pedido: async (carrito: any[]) => {
-    return true;
-  },
-  obtener_reporte_general_articulos: async (mes: string, anio: string) => {
-    return [];
-  },
-  obtener_reporte_por_persona: async (mes: string, anio: string) => {
-    return [];
   },
   downloadFile: (url: string, filename: string) => {
     const a = document.createElement('a');

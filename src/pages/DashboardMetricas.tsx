@@ -12,10 +12,15 @@ export default function DashboardMetricas() {
   }, []);
 
   const loadData = async () => {
-    const dashData = await mediator.obtener_dashboard_completo();
-    const metData = await mediator.obtener_metricas();
-    setData(dashData);
-    setMetrics(metData);
+    try {
+      const dashData = await mediator.obtener_dashboard_completo();
+      setData(dashData);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data', error);
+    }
   };
 
   return (
