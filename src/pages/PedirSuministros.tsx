@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { mediator, API_URL } from '../services/api';
 import { ShoppingCart, CheckCircle, Plus, Trash2, X } from 'lucide-react';
+import { useAppStore } from '../store';
 
 function ProductoCard({ item, onAdd }: { item: any, onAdd: (nombre: string, cantidad: number) => void }) {
   const [variante, setVariante] = useState(item.variantes && item.variantes.length > 0 ? item.variantes[0] : item.nombre);
@@ -53,10 +54,14 @@ function ProductoCard({ item, onAdd }: { item: any, onAdd: (nombre: string, cant
 }
 
 export default function PedirSuministros() {
+  const user = useAppStore(state => state.user);
+  
   const [catalogo, setCatalogo] = useState<any[]>([]);
   const [carrito, setCarrito] = useState<{ [key: string]: number }>({});
-  const [correo, setCorreo] = useState('empleado@grupokfc.com');
-  const [nombre, setNombre] = useState('Juan Perez');
+  
+  const correo = user?.correo || 'empleado@grupokfc.com';
+  const nombre = user?.nombre || 'Juan Perez';
+  
   const [yaHizoPedido, setYaHizoPedido] = useState(false);
   const [isVerifying, setIsVerifying] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(window.innerWidth >= 1280);

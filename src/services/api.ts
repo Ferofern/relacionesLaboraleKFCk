@@ -13,6 +13,25 @@ const downloadBlob = (blob: Blob, filename: string) => {
 
 export const mediator = {
   // ==========================================
+  // 0. Auth
+  // ==========================================
+  login: async (correo: string, password: string) => {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ correo, password })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+      const error = new Error('Error login');
+      (error as any).response = { status: res.status, data };
+      throw error;
+    }
+    return data;
+  },
+
+  // ==========================================
   // 1. Módulo IESS (Extracción)
   // ==========================================
   process_iess_files: async (files: File[], onProgress: (p: number) => void) => {

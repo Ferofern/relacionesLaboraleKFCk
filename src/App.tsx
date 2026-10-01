@@ -11,54 +11,48 @@ import GestionProyectos from './pages/GestionProyectos';
 import DashboardMetricas from './pages/DashboardMetricas';
 import PedirSuministros from './pages/PedirSuministros';
 import ReportesSuministros from './pages/ReportesSuministros';
-import { Shield } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useAppStore } from './store';
+import Layout from './components/Layout';
+import ExtractorIess from './pages/ExtractorIess';
+import ValidadorIess from './pages/ValidadorIess';
+import MapeoCCO from './pages/MapeoCCO';
+import ExtractorFacturas from './pages/ExtractorFacturas';
+import GeneradorStickers from './pages/GeneradorStickers';
+import GeneradorDotaciones from './pages/GeneradorDotaciones';
+import GestionProyectos from './pages/GestionProyectos';
+import DashboardMetricas from './pages/DashboardMetricas';
+import PedirSuministros from './pages/PedirSuministros';
+import ReportesSuministros from './pages/ReportesSuministros';
+import Login from './pages/Login';
 
-function Login() {
-  const setUserRole = useAppStore(state => state.setUserRole);
-  
-  return (
-    <div className="min-h-screen bg-[var(--paper)] flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-xl shadow-[var(--shadow)] max-w-md w-full text-center border-t-4 border-[var(--cyan)]">
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-[var(--paper)] rounded-full flex items-center justify-center">
-            <Shield className="w-8 h-8 text-[var(--cyan)]" />
-          </div>
-        </div>
-        <h1 className="text-2xl font-bold text-[var(--ink)] mb-2">Acceso Corporativo</h1>
-        <p className="text-[var(--muted)] mb-8">Seleccione su rol para ingresar al sistema</p>
-        
-        <div className="space-y-4">
-          <button 
-            onClick={() => setUserRole('Administrador')}
-            className="w-full py-3 px-4 bg-[var(--navy)] text-white rounded-lg hover:bg-[var(--cyan)] transition-colors font-medium flex justify-between items-center"
-          >
-            <span>Administrador</span>
-            <span className="text-xs bg-white/20 px-2 py-1 rounded">Acceso Total</span>
-          </button>
-          <button 
-            onClick={() => setUserRole('Aprobador')}
-            className="w-full py-3 px-4 bg-white border border-[var(--line)] text-[var(--ink)] rounded-lg hover:border-[var(--cyan)] hover:text-[var(--cyan)] transition-colors font-medium flex justify-between items-center"
-          >
-            <span>Aprobador</span>
-            <span className="text-xs bg-[var(--paper)] text-[var(--muted)] px-2 py-1 rounded">Gestión</span>
-          </button>
-          <button 
-            onClick={() => setUserRole('Operador')}
-            className="w-full py-3 px-4 bg-white border border-[var(--line)] text-[var(--ink)] rounded-lg hover:border-[var(--cyan)] hover:text-[var(--cyan)] transition-colors font-medium flex justify-between items-center"
-          >
-            <span>Operador</span>
-            <span className="text-xs bg-[var(--paper)] text-[var(--muted)] px-2 py-1 rounded">Básico</span>
-          </button>
-        </div>
+// Componente para proteger las rutas basado en los módulos autorizados del usuario
+function ProtectedRoute({ children, moduleName }: { children: JSX.Element, moduleName?: string }) {
+  const user = useAppStore(state => state.user);
+
+  // Si no hay usuario, redirigir al login (aunque el App.tsx general ya debería atajarlo)
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Si la ruta requiere un módulo específico y el usuario no lo tiene
+  if (moduleName && (!user.modulos || !user.modulos.includes(moduleName))) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">403</h2>
+        <p className="text-lg text-gray-600">No estás autorizado para acceder a este módulo.</p>
+        <p className="text-sm text-gray-400 mt-2">Módulo requerido: {moduleName}</p>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return children;
 }
 
 function App() {
-  const userRole = useAppStore(state => state.userRole);
+  const user = useAppStore(state => state.user);
 
-  if (!userRole) {
+  if (!user) {
     return <Login />;
   }
 
@@ -68,20 +62,23 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           
-          <Route path="extractor-iess" element={<ExtractorIess />} />
-          <Route path="validador-iess" element={<ValidadorIess />} />
-          <Route path="mapeo-cco" element={<MapeoCCO />} />
+          <Route path="extractor-iess" element={<ProtectedRoute moduleName="Extractor IESS"><ExtractorIess /></ProtectedRoute>} />
+          <Route path="validador-iess" element={<ProtectedRoute moduleName="Validador IESS vs Payroll"><ValidadorIess /></ProtectedRoute>} />
+          <Route path="mapeo-cco" element={<ProtectedRoute moduleName="Mapeo CCO (Liquidación)"><MapeoCCO /></ProtectedRoute>} />
           
-          <Route path="extractor-facturas" element={<ExtractorFacturas />} />
-          <Route path="generador-stickers" element={<GeneradorStickers />} />
-          <Route path="generador-dotaciones" element={<GeneradorDotaciones />} />
+          <Route path="extractor-facturas" element={<ProtectedRoute moduleName="Extractor Facturas"><ExtractorFacturas /></ProtectedRoute>} />
+          <Route path="generador-stickers" element={<ProtectedRoute moduleName="Generador Stickers"><GeneradorStickers /></ProtectedRoute>} />
+          <Route path="generador-dotaciones" element={<ProtectedRoute moduleName="Generador Uniformes BOT SAP"><GeneradorDotaciones /></ProtectedRoute>} />
           
-          <Route path="pedir-suministros" element={<PedirSuministros />} />
-          <Route path="reportes-suministros" element={<ReportesSuministros />} />
+          <Route path="pedir-suministros" element={<ProtectedRoute moduleName="Pedir Suministros"><PedirSuministros /></ProtectedRoute>} />
+          <Route path="reportes-suministros" element={<ProtectedRoute moduleName="Reportes Suministros"><ReportesSuministros /></ProtectedRoute>} />
           
-          <Route path="gestion-proyectos" element={<GestionProyectos />} />
+          <Route path="gestion-proyectos" element={<ProtectedRoute moduleName="Gestión de Proyectos"><GestionProyectos /></ProtectedRoute>} />
           
-          <Route path="dashboard" element={<DashboardMetricas />} />
+          {/* Dashboard generalmente es público para todos los usuarios autenticados */}
+          <Route path="dashboard" element={<ProtectedRoute><DashboardMetricas /></ProtectedRoute>} />
+          
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
     </Router>

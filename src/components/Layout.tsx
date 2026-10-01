@@ -4,15 +4,15 @@ import { useAppStore } from '../store';
 import { 
   Menu, LogOut, FileText, FileCheck, Mail, Receipt, 
   Image as ImageIcon, Tag, Shirt, Combine, Briefcase, 
-  FormInput, BarChart3, ShoppingCart, ClipboardList, ShieldAlert
+  FormInput, BarChart3, ShoppingCart, ClipboardList, ShieldAlert, User as UserIcon
 } from 'lucide-react';
 
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
-  const { userRole, setUserRole } = useAppStore();
+  const { userRole, setUser, user } = useAppStore();
 
   const handleLogout = () => {
-    setUserRole(null);
+    setUser(null);
   };
 
   const modules = [
@@ -41,7 +41,6 @@ export default function Layout() {
     },
     {
       category: 'Gestión y Proyectos',
-      roles: ['Administrador', 'Aprobador'],
       items: [
         { path: '/gestion-proyectos', name: 'Gestión de Proyectos', icon: <Briefcase size={18} /> },
       ]
@@ -49,10 +48,19 @@ export default function Layout() {
     {
       category: 'Analítica y Dashboards',
       items: [
-        { path: '/dashboard', name: 'Dashboard Métricas', icon: <BarChart3 size={18} /> },
+        { path: '/dashboard', name: 'Dashboard Métricas', icon: <BarChart3 size={18} />, alwaysShow: true },
       ]
     }
   ];
+
+  // Filtramos los módulos según los permisos del usuario
+  const filteredModules = modules.map(category => {
+    const filteredItems = category.items.filter(item => {
+      // Mostrar si tiene alwaysShow (ej. Dashboard) o si su nombre está en los módulos autorizados del usuario
+      return item.alwaysShow || (user?.modulos && user.modulos.includes(item.name));
+    });
+    return { ...category, items: filteredItems };
+  }).filter(category => category.items.length > 0);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--paper)]">
@@ -69,7 +77,7 @@ export default function Layout() {
         </div>
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar pb-20">
-          {modules.filter(c => !c.roles || c.roles.includes(userRole as string)).map((category, idx) => (
+          {filteredModules.map((category, idx) => (
             <div key={idx} className="mb-6">
               {!collapsed && (
                 <div className="px-4 mb-2 text-xs font-semibold text-[var(--muted)] uppercase tracking-wider">
@@ -110,6 +118,17 @@ export default function Layout() {
         </div>
         
         <div className="p-4 border-t border-white/10">
+          {!collapsed && user && (
+            <div className="mb-4 flex items-center gap-3 px-2 overflow-hidden">
+              <div className="w-8 h-8 rounded bg-[var(--cyan)] flex items-center justify-center shrink-0">
+                <UserIcon size={16} />
+              </div>
+              <div className="overflow-hidden">
+                <div className="text-sm font-medium truncate">{user.nombre}</div>
+                <div className="text-xs text-gray-400 truncate">{user.rol}</div>
+              </div>
+            </div>
+          )}
           <button 
             onClick={handleLogout}
             className="flex items-center w-full p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
@@ -122,18 +141,18 @@ export default function Layout() {
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="topbar bg-white border-b border-[var(--line)] h-16 flex items-center justify-between px-6 shrink-0 z-10 shadow-sm">
-          <h1 className="text-xl font-semibold text-[var(--ink)]">
+          <h1 className="text-xl font-semibold text-[var(--ink)] hidden sm:block">
             Sistema Integrado <em>RRHH</em>
           </h1>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-auto">
             <div className="demo-banner flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium">
               <ShieldAlert size={16} className="text-[var(--cyan)]" />
-              Modo Activo: <span className="px-2 py-0.5 rounded text-white text-xs">{userRole}</span>
+              Rol: <span className="px-2 py-0.5 rounded text-white text-xs">{userRole || 'Ninguno'}</span>
             </div>
             
-            <div className="w-9 h-9 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--ink)] font-bold">
-              {userRole?.charAt(0)}
+            <div className="w-9 h-9 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--ink)] font-bold uppercase overflow-hidden text-sm" title={user?.correo}>
+              {user?.nombre?.charAt(0) || userRole?.charAt(0) || 'U'}
             </div>
           </div>
         </header>
