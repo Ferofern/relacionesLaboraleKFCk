@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useAppStore } from '../store';
 import { mediator } from '../services/api';
-import { Shield, KeyRound, Mail, Loader2 } from 'lucide-react';
+import { KeyRound, Mail, Loader2 } from 'lucide-react';
+import logoKFC from '../../logos/logo-grupo-kfc.png';
+import logoRRHH from '../../logos/logoRecursosHumanosFirma.png';
 
 export default function Login() {
   const setUser = useAppStore(state => state.setUser);
@@ -40,10 +42,10 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[var(--paper)] flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-xl shadow-[var(--shadow)] max-w-md w-full text-center border-t-4 border-[var(--cyan)]">
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-[var(--paper)] rounded-full flex items-center justify-center">
-            <Shield className="w-8 h-8 text-[var(--cyan)]" />
-          </div>
+        <div className="flex justify-center mb-6 gap-6 items-center">
+          <img src={logoKFC} alt="Grupo KFC" className="h-16 object-contain" />
+          <div className="h-12 w-px bg-gray-200"></div>
+          <img src={logoRRHH} alt="Recursos Humanos" className="h-12 object-contain" />
         </div>
         <h1 className="text-2xl font-bold text-[var(--ink)] mb-2">Acceso Corporativo</h1>
         <p className="text-[var(--muted)] mb-6">Ingresa tus credenciales para continuar</p>

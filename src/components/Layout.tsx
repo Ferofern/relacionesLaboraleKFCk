@@ -6,6 +6,7 @@ import {
   Image as ImageIcon, Tag, Shirt, Combine, Briefcase, 
   FormInput, BarChart3, ShoppingCart, ClipboardList, ShieldAlert, User as UserIcon
 } from 'lucide-react';
+import logoKFC from '../../logos/logo-grupo-kfc.png';
 
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -81,14 +82,21 @@ export default function Layout() {
     <div className="flex h-screen overflow-hidden bg-[var(--paper)]">
       <aside className={`sidebar transition-all duration-300 flex flex-col ${collapsed ? 'w-20' : 'w-64'} shrink-0 text-white`}>
         <div className="p-4 flex items-center justify-between">
-          {!collapsed && (
-            <div className="brand-logo mb-0">
-              <div className="text-[var(--cyan)] font-bold text-xl tracking-tighter">KFC<span className="text-[var(--ink)]">RRHH</span></div>
+          {!collapsed ? (
+            <div className="brand-logo mb-0 flex items-center gap-3">
+              <img src={logoKFC} alt="KFC" className="h-8 object-contain bg-white rounded p-1" />
+              <div className="text-[var(--cyan)] font-bold text-xl tracking-tighter">RRHH</div>
+            </div>
+          ) : (
+            <div className="brand-logo mb-0 flex justify-center w-full">
+              <img src={logoKFC} alt="KFC" className="h-8 object-contain bg-white rounded p-1" />
             </div>
           )}
-          <button onClick={() => setCollapsed(!collapsed)} className="p-2 hover:bg-white/10 rounded-lg text-white">
-            <Menu size={20} />
-          </button>
+          {!collapsed && (
+            <button onClick={() => setCollapsed(!collapsed)} className="p-2 hover:bg-white/10 rounded-lg text-white ml-2">
+              <Menu size={20} />
+            </button>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar pb-20">
