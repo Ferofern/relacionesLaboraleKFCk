@@ -93,7 +93,23 @@ export const mediator = {
   // ==========================================
   generate_stickers: async (cedulas: string[], formato: string) => {
     const formData = new FormData();
-    formData.append('seleccionados', JSON.stringify(cedulas));
+    
+    // Construir el array de objetos completo que necesita el backend
+    const empleadosCompletos = cedulas.map(cedula => {
+      const dbEntry = (window as any).stickersDatabase?.[cedula];
+      if (dbEntry) {
+        return dbEntry; // Contiene Trabajador, Nombre, Compania_Desc, Fecha_Ingreso
+      }
+      // Fallback de seguridad por si agregaron una cédula manual que no está en el Excel
+      return {
+        Trabajador: cedula,
+        Nombre: 'Desconocido',
+        Compania_Desc: 'SIN COMPAÑIA',
+        Fecha_Ingreso: 'N/A'
+      };
+    });
+
+    formData.append('seleccionados', JSON.stringify(empleadosCompletos));
     formData.append('region', formato); 
     const res = await fetch(`${API_URL}/api/stickers/generar`, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Error generando stickers');
