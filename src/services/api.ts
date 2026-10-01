@@ -57,22 +57,6 @@ export const mediator = {
   },
 
   // ==========================================
-  // 4. Módulo Claquetas
-  // ==========================================
-  process_claquetas_file: async (region: string, responsable: string, fecha: string, file: File) => {
-    const formData = new FormData();
-    formData.append('archivo', file);
-    formData.append('region', region);
-    formData.append('fecha_str', fecha);
-    formData.append('responsable', responsable);
-    const res = await fetch(`${API_URL}/api/claquetas/generar`, { method: 'POST', body: formData });
-    if (!res.ok) throw new Error('Error generando claquetas');
-    const blob = await res.blob();
-    downloadBlob(blob, 'Claquetas.pdf');
-    return 'descarga_completada';
-  },
-
-  // ==========================================
   // 5. Módulo Dotaciones
   // ==========================================
   process_dotacion_files: async (tipo: string, leccionario: File, stocks: File, fecha: string) => {

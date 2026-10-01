@@ -28,7 +28,6 @@ export default function Layout() {
       category: 'Documentos y Generadores',
       items: [
         { path: '/extractor-facturas', name: 'Extractor Facturas', icon: <Receipt size={18} /> },
-        { path: '/generador-claquetas', name: 'Generador Claquetas', icon: <ImageIcon size={18} /> },
         { path: '/generador-stickers', name: 'Generador Stickers', icon: <Tag size={18} /> },
         { path: '/generador-dotaciones', name: 'Generador Uniformes BOT SAP', icon: <Shirt size={18} /> },
       ]

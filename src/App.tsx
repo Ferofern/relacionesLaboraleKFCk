@@ -5,7 +5,6 @@ import ExtractorIess from './pages/ExtractorIess';
 import ValidadorIess from './pages/ValidadorIess';
 import MapeoCCO from './pages/MapeoCCO';
 import ExtractorFacturas from './pages/ExtractorFacturas';
-import GeneradorClaquetas from './pages/GeneradorClaquetas';
 import GeneradorStickers from './pages/GeneradorStickers';
 import GeneradorDotaciones from './pages/GeneradorDotaciones';
 import GestionProyectos from './pages/GestionProyectos';
@@ -72,7 +71,6 @@ function App() {
           <Route path="mapeo-cco" element={<MapeoCCO />} />
           
           <Route path="extractor-facturas" element={<ExtractorFacturas />} />
-          <Route path="generador-claquetas" element={<GeneradorClaquetas />} />
           <Route path="generador-stickers" element={<GeneradorStickers />} />
           <Route path="generador-dotaciones" element={<GeneradorDotaciones />} />
           
