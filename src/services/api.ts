@@ -232,7 +232,13 @@ export const mediator = {
     return true;
   },
   process_unificar_pdfs: async (files: File[]) => {
-    return 'URL_PDF_UNIFICADO';
+    const formData = new FormData();
+    files.forEach(f => formData.append('archivos', f));
+    const res = await fetch(`${API_URL}/api/unificador/procesar`, { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Error unificando PDFs');
+    const blob = await res.blob();
+    downloadBlob(blob, 'Documentos_Unificados.pdf');
+    return 'descarga_completada';
   },
   obtener_metricas: async () => {
     return { ahorro: '$0', optimizacion: '0%', alcance: '0 Empleados' };
