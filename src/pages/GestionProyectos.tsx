@@ -8,7 +8,8 @@ export default function GestionProyectos() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     codigo: '', nombre: '', solicitante: '', fechaInicio: '', fechaFin: '',
-    prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: ''
+    prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: '',
+    diccionario_datos: '', instructivo: ''
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function GestionProyectos() {
     setIsSubmitting(true);
     await mediator.crear_proyecto(formData);
     setIsSubmitting(false);
-    setFormData({ codigo: '', nombre: '', solicitante: '', fechaInicio: '', fechaFin: '', prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: '' });
+    setFormData({ codigo: '', nombre: '', solicitante: '', fechaInicio: '', fechaFin: '', prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: '', diccionario_datos: '', instructivo: '' });
     setActiveTab('revisar');
   };
 
@@ -97,6 +98,17 @@ export default function GestionProyectos() {
           <div>
             <label className="block text-sm font-semibold text-[var(--ink)] mb-1">Descripción</label>
             <textarea rows={3} value={formData.descripcion} onChange={e => setFormData({...formData, descripcion: e.target.value})} className="w-full border border-[var(--line)] rounded-lg px-3 py-2 outline-none focus:border-[var(--cyan)] resize-none"></textarea>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-[var(--ink)] mb-1">Diccionario de Datos</label>
+              <textarea rows={4} value={formData.diccionario_datos} onChange={e => setFormData({...formData, diccionario_datos: e.target.value})} className="w-full border border-[var(--line)] rounded-lg px-3 py-2 outline-none focus:border-[var(--cyan)] resize-none" placeholder="Definición de variables..."></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[var(--ink)] mb-1">Instructivo</label>
+              <textarea rows={4} value={formData.instructivo} onChange={e => setFormData({...formData, instructivo: e.target.value})} className="w-full border border-[var(--line)] rounded-lg px-3 py-2 outline-none focus:border-[var(--cyan)] resize-none" placeholder="Paso a paso..."></textarea>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

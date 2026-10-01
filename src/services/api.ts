@@ -146,15 +146,16 @@ export const mediator = {
   // ==========================================
   // OTROS MÉTODOS MANTENIDOS PARA EVITAR CRASHES DEL UI (No especificados en el backend)
   // ==========================================
-  load_payroll_cco: async () => {
-    const res = await fetch(`${API_URL}/api/cco/payroll`).catch(() => null);
-    return res ? res.json() : [];
-  },
-  get_nombre_by_cedula: async (cedula: string) => {
-    return 'Desconocido';
-  },
-  process_cco_individual: async (ccos: any[]) => {
-    return ccos;
+  procesar_cco: async (payroll: File, cco: string, cedula_ex: string, nombre_ex: string, fecha_liq: string) => {
+    const formData = new FormData();
+    formData.append('archivo_payroll', payroll);
+    formData.append('cco', cco);
+    formData.append('cedula_ex', cedula_ex);
+    if (nombre_ex) formData.append('nombre_ex', nombre_ex);
+    formData.append('fecha_liq', fecha_liq);
+    const res = await fetch(`${API_URL}/api/cco/procesar`, { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Error procesando CCO');
+    return res.json();
   },
   process_stickers_file: async (file: File) => {
     return true;
