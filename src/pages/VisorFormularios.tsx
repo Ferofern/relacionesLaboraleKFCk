@@ -13,7 +13,7 @@ export default function VisorFormularios() {
   const [error, setError] = useState<string | null>(null);
 
   // Filtros
-  const [filtroMateria, setFiltroMateria] = useState('');
+  const [filtroMateria, setFiltroMateria] = useState<string[]>([]);
   const [filtroArea, setFiltroArea] = useState('');
   const [filtroPersonal, setFiltroPersonal] = useState('');
 
@@ -66,7 +66,7 @@ export default function VisorFormularios() {
 
   const filteredData = useMemo(() => {
     return data.filter(item => {
-      const matchMateria = filtroMateria === '' || item.materias === filtroMateria;
+      const matchMateria = filtroMateria.length === 0 || (item.materias && filtroMateria.some(f => item.materias.includes(f)));
       const matchArea = filtroArea === '' || item.area_o_marca === filtroArea;
       const matchPersonal = filtroPersonal === '' || item.tipo_personal === filtroPersonal;
       return matchMateria && matchArea && matchPersonal;
@@ -83,7 +83,18 @@ export default function VisorFormularios() {
   }, [filteredData]);
 
   // Options for selects
-  const materiasOptions = useMemo(() => Array.from(new Set(data.map(d => d.materias).filter(Boolean))), [data]);
+  const materiasOptions = useMemo(() => {
+    const allMaterias = new Set<string>();
+    data.forEach(d => {
+      if (d.materias) {
+        d.materias.split(',').forEach((m: string) => {
+          const trimmed = m.trim();
+          if (trimmed) allMaterias.add(trimmed);
+        });
+      }
+    });
+    return Array.from(allMaterias).sort();
+  }, [data]);
   const areaOptions = useMemo(() => Array.from(new Set(data.map(d => d.area_o_marca).filter(Boolean))), [data]);
   const personalOptions = useMemo(() => Array.from(new Set(data.map(d => d.tipo_personal).filter(Boolean))), [data]);
 
@@ -156,12 +167,24 @@ export default function VisorFormularios() {
               <Filter size={16} className="text-[var(--cyan)]" /> Filtros
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+              <div className="flex flex-col">
                 <label className="block text-xs font-semibold text-[var(--muted)] mb-1 uppercase">Tipo de Título (Materias)</label>
-                <select value={filtroMateria} onChange={e => setFiltroMateria(e.target.value)} className="w-full border border-[var(--line)] rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--cyan)] bg-[var(--paper)]">
-                  <option value="">Todos</option>
-                  {materiasOptions.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
+                <div className="w-full border border-[var(--line)] rounded-lg p-2 text-sm bg-[var(--paper)] max-h-32 overflow-y-auto space-y-1">
+                  {materiasOptions.map(m => (
+                    <label key={m} className="flex items-center gap-2 cursor-pointer hover:bg-white p-1 rounded transition-colors">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-[var(--line)] text-[var(--cyan)] focus:ring-[var(--cyan)]"
+                        checked={filtroMateria.includes(m)}
+                        onChange={() => {
+                          setFiltroMateria(prev => prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]);
+                        }}
+                      />
+                      <span className="text-[var(--ink)] truncate">{m}</span>
+                    </label>
+                  ))}
+                  {materiasOptions.length === 0 && <span className="text-gray-400 text-xs p-1">Sin opciones</span>}
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-[var(--muted)] mb-1 uppercase">Área o Marca</label>
@@ -261,11 +284,9 @@ export default function VisorFormularios() {
                       <th className="px-6 py-4 font-semibold">Cédula</th>
                       <th className="px-6 py-4 font-semibold">Empleado</th>
                       <th className="px-6 py-4 font-semibold">Tipo de Título</th>
+                      <th className="px-6 py-4 font-semibold text-center">Validación</th>
                       <th className="px-6 py-4 font-semibold">Área / Marca</th>
                       <th className="px-6 py-4 font-semibold">Tipo de Personal</th>
-                      <th className="px-6 py-4 font-semibold">Fecha Registro</th>
-                      <th className="px-6 py-4 font-semibold text-center">Estado de Estudios</th>
-                      <th className="px-6 py-4 font-semibold text-center">Validación</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -274,19 +295,6 @@ export default function VisorFormularios() {
                         <td className="px-6 py-4 font-medium text-[var(--muted)]">{item.cedula}</td>
                         <td className="px-6 py-4 font-bold text-[var(--ink)]">{item.nombre_completo}</td>
                         <td className="px-6 py-4 text-[var(--ink)]">{item.materias || '-'}</td>
-                        <td className="px-6 py-4 text-[var(--muted)]">{item.area_o_marca}</td>
-                        <td className="px-6 py-4 text-[var(--muted)]">{item.tipo_personal}</td>
-                        <td className="px-6 py-4 text-[var(--muted)]">
-                          {item.created_at ? new Date(item.created_at).toLocaleDateString() : '-'}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className={`score-pill ${
-                            (item.estado_estudios && item.estado_estudios.toLowerCase().includes('culminado')) 
-                              ? '' : 'empty'
-                          }`}>
-                            {item.estado_estudios || 'Desconocido'}
-                          </span>
-                        </td>
                         <td className="px-6 py-4 text-center">
                           <a 
                             href="https://titulos-edusuperior.minedec.gob.ec/consulta-titulos-web/faces/vista/consulta/consulta.xhtml" 
@@ -297,6 +305,8 @@ export default function VisorFormularios() {
                             Validar <ExternalLink size={12} />
                           </a>
                         </td>
+                        <td className="px-6 py-4 text-[var(--muted)]">{item.area_o_marca}</td>
+                        <td className="px-6 py-4 text-[var(--muted)]">{item.tipo_personal}</td>
                       </tr>
                     ))}
                   </tbody>
