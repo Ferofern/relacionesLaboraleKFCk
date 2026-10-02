@@ -14,7 +14,6 @@ export default function VisorFormularios() {
 
   // Filtros
   const [filtroMateria, setFiltroMateria] = useState('');
-  const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroArea, setFiltroArea] = useState('');
   const [filtroPersonal, setFiltroPersonal] = useState('');
 
@@ -28,9 +27,24 @@ export default function VisorFormularios() {
       setError(null);
       const res = await mediator.obtener_actualizacion_academica();
       
-      const arrayData = Array.isArray(res) ? res : (res?.data || []);
+      let arrayData = Array.isArray(res) ? res : (res?.data || []);
       
       if (arrayData.length > 0 || Array.isArray(res)) {
+        arrayData = arrayData.map((item: any) => {
+          let materiasParsed = item.materias;
+          try {
+            if (item.materias && typeof item.materias === 'string' && item.materias.startsWith('[')) {
+              const parsed = JSON.parse(item.materias);
+              materiasParsed = Array.isArray(parsed) ? parsed.join(', ') : parsed;
+            }
+          } catch(e) {
+             // Fallback to original if parse fails
+          }
+          return {
+            ...item,
+            materias: materiasParsed
+          };
+        });
         setData(arrayData);
       } else {
         setData([]);
@@ -48,19 +62,16 @@ export default function VisorFormularios() {
   const filteredData = useMemo(() => {
     return data.filter(item => {
       const matchMateria = filtroMateria === '' || item.materias === filtroMateria;
-      const matchEstado = filtroEstado === '' || item.estado_estudios === filtroEstado;
       const matchArea = filtroArea === '' || item.area_o_marca === filtroArea;
       const matchPersonal = filtroPersonal === '' || item.tipo_personal === filtroPersonal;
-      return matchMateria && matchEstado && matchArea && matchPersonal;
+      return matchMateria && matchArea && matchPersonal;
     });
-  }, [data, filtroMateria, filtroEstado, filtroArea, filtroPersonal]);
+  }, [data, filtroMateria, filtroArea, filtroPersonal]);
 
   const kpis = useMemo(() => {
     const total = filteredData.length;
     const culminados = filteredData.filter((item: any) => 
-      item.estado_estudios === 'Culminado' || 
-      item.estado_estudios === 'Graduado' || 
-      item.estado_estudios === 'Finalizado'
+      item.estado_estudios && item.estado_estudios.toLowerCase().includes('culminado')
     ).length;
     const enCurso = total - culminados;
     return { total, culminados, enCurso };
@@ -68,7 +79,6 @@ export default function VisorFormularios() {
 
   // Options for selects
   const materiasOptions = useMemo(() => Array.from(new Set(data.map(d => d.materias).filter(Boolean))), [data]);
-  const estadoOptions = useMemo(() => Array.from(new Set(data.map(d => d.estado_estudios).filter(Boolean))), [data]);
   const areaOptions = useMemo(() => Array.from(new Set(data.map(d => d.area_o_marca).filter(Boolean))), [data]);
   const personalOptions = useMemo(() => Array.from(new Set(data.map(d => d.tipo_personal).filter(Boolean))), [data]);
 
@@ -140,19 +150,12 @@ export default function VisorFormularios() {
             <h3 className="text-sm font-bold text-[var(--ink)] mb-4 flex items-center gap-2">
               <Filter size={16} className="text-[var(--cyan)]" /> Filtros
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[var(--muted)] mb-1 uppercase">Tipo de Título (Materias)</label>
                 <select value={filtroMateria} onChange={e => setFiltroMateria(e.target.value)} className="w-full border border-[var(--line)] rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--cyan)] bg-[var(--paper)]">
                   <option value="">Todos</option>
                   {materiasOptions.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[var(--muted)] mb-1 uppercase">Estado de Estudios</label>
-                <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} className="w-full border border-[var(--line)] rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--cyan)] bg-[var(--paper)]">
-                  <option value="">Todos</option>
-                  {estadoOptions.map(e => <option key={e} value={e}>{e}</option>)}
                 </select>
               </div>
               <div>
@@ -261,8 +264,8 @@ export default function VisorFormularios() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredData.map((item: any, i: number) => (
-                      <tr key={i} className="border-b border-[var(--line)] hover:bg-[var(--paper)] transition-colors">
+                    {filteredData.map((item: any) => (
+                      <tr key={item.id} className="border-b border-[var(--line)] hover:bg-[var(--paper)] transition-colors">
                         <td className="px-6 py-4 font-medium text-[var(--muted)]">{item.cedula}</td>
                         <td className="px-6 py-4 font-bold text-[var(--ink)]">{item.nombre_completo}</td>
                         <td className="px-6 py-4 text-[var(--ink)]">{item.materias || '-'}</td>
@@ -273,7 +276,7 @@ export default function VisorFormularios() {
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`score-pill ${
-                            (item.estado_estudios === 'Culminado' || item.estado_estudios === 'Graduado' || item.estado_estudios === 'Finalizado') 
+                            (item.estado_estudios && item.estado_estudios.toLowerCase().includes('culminado')) 
                               ? '' : 'empty'
                           }`}>
                             {item.estado_estudios || 'Desconocido'}
