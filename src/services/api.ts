@@ -162,14 +162,24 @@ export const mediator = {
     return res.json();
   },
 
-  procesar_cco: async (payroll: File, cco: string, cedula_ex: string, nombre_ex: string, fecha_liq: string) => {
-    const formData = new FormData();
-    formData.append('archivo_payroll', payroll);
-    formData.append('cco', cco);
-    formData.append('cedula_ex', cedula_ex);
-    if (nombre_ex) formData.append('nombre_ex', nombre_ex);
-    formData.append('fecha_liq', fecha_liq);
-    const res = await fetch(`${API_URL}/api/cco/procesar`, { method: 'POST', body: formData });
+  procesar_cco: async (cco: string, cedula_ex: string, nombre_ex: string, fecha_liq: string) => {
+    const payload = {
+      cco,
+      cedula_ex,
+      nombre_ex,
+      fecha_liq
+    };
+    const res = await fetch(`${API_URL}/api/cco/procesar`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload) 
+    });
+    
+    if (res.status === 404) {
+       const errorData = await res.json().catch(() => ({}));
+       throw new Error(errorData.error || `No se encontró el CCO ${cco} en el catálogo`);
+    }
+
     if (!res.ok) throw new Error('Error procesando CCO');
     return res.json();
   },

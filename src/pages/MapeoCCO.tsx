@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Send, Upload } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { mediator } from '../services/api';
 
 export default function MapeoCCO() {
-  const [payrollFile, setPayrollFile] = useState<File | null>(null);
   const [cco, setCco] = useState('');
   const [cedula, setCedula] = useState('');
   const [nombre, setNombre] = useState('');
@@ -13,15 +12,23 @@ export default function MapeoCCO() {
   const [result, setResult] = useState<any>(null);
 
   const processCco = async () => {
-    if (!payrollFile || !cco || !cedula || !fecha) return;
+    if (!cco || !cedula || !fecha) return;
     
     setIsProcessing(true);
     try {
-      const data = await mediator.procesar_cco(payrollFile, cco, cedula, nombre, fecha);
+      const data = await mediator.procesar_cco(cco, cedula, nombre, fecha);
       setResult(data);
-    } catch (error) {
+      
+      const to = data.to;
+      const cc = data.cc;
+      const subject = encodeURIComponent(data.asunto);
+      const body = encodeURIComponent(data.cuerpo);
+      const mailtoLink = `mailto:${to}?cc=${cc}&subject=${subject}&body=${body}`;
+      
+      window.location.href = mailtoLink;
+    } catch (error: any) {
       console.error(error);
-      alert('Error procesando el CCO. Verifica la consola o intenta de nuevo.');
+      alert(error.message || 'Error procesando el CCO. Verifica la consola o intenta de nuevo.');
     }
     setIsProcessing(false);
   };
@@ -39,22 +46,6 @@ export default function MapeoCCO() {
         </div>
         
         <div className="p-5 space-y-4">
-          <div className="border-2 border-dashed border-[var(--line)] rounded-xl p-6 text-center hover:bg-[var(--paper)] transition-colors cursor-pointer relative">
-            <input 
-              type="file" 
-              accept=".xlsx,.xls" 
-              onChange={(e) => setPayrollFile(e.target.files?.[0] || null)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div className="flex flex-col items-center gap-2">
-              <Upload size={24} className={payrollFile ? "text-[var(--cyan)]" : "text-[var(--muted)]"} />
-              <p className="font-medium text-[var(--ink)]">
-                {payrollFile ? payrollFile.name : 'Subir Matriz Payroll (Excel)'}
-              </p>
-              {!payrollFile && <p className="text-sm text-[var(--muted)]">Haz clic o arrastra el archivo aquí</p>}
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--ink)] mb-1">CÓDIGO CCO *</label>
@@ -102,7 +93,7 @@ export default function MapeoCCO() {
         <div className="p-4 border-t border-[var(--line)] flex justify-end bg-[var(--paper)]">
           <button 
             onClick={processCco}
-            disabled={isProcessing || !payrollFile || !cco || !cedula || !fecha}
+            disabled={isProcessing || !cco || !cedula || !fecha}
             className="generate-btn text-white px-6 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
           >
             {isProcessing ? 'Procesando...' : 'Generar Correo'}
@@ -123,7 +114,7 @@ export default function MapeoCCO() {
             <p><strong>CC:</strong> {result.cc}</p>
           </div>
           <a 
-            href={result.mailto}
+            href={`mailto:${result.to}?cc=${result.cc}&subject=${encodeURIComponent(result.asunto)}&body=${encodeURIComponent(result.cuerpo)}`}
             className="flex items-center justify-center gap-2 w-full py-3 bg-[var(--cyan)] text-white rounded-lg font-semibold hover:bg-cyan-600 transition-colors shadow-sm"
           >
             <Send size={18} /> Abrir en Cliente de Correo (Outlook)
