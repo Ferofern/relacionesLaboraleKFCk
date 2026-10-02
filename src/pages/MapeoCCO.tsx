@@ -29,7 +29,7 @@ export default function MapeoCCO() {
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--ink)]">Mapeo de Cargos CCO</h2>
+        <h2 className="text-2xl font-bold text-[var(--ink)]">Bot Mail Liquidaciones</h2>
         <p className="text-[var(--muted)] mt-1">Generación de correos de liquidación por Centro de Costo.</p>
       </div>
 
