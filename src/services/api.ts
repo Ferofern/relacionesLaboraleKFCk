@@ -184,6 +184,14 @@ export const mediator = {
     return res.json();
   },
 
+  actualizar_catalogo_cco: async (archivo: File) => {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    const res = await fetch(`${API_URL}/api/cco/catalogo/actualizar`, { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Error actualizando el catálogo CCO');
+    return res.json();
+  },
+
   // ==========================================
   // CONEXIONES A LOS NUEVOS MÓDULOS DEL BACKEND (Suministros y Formularios)
   // ==========================================

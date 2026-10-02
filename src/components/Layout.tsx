@@ -36,6 +36,7 @@ export default function Layout() {
         { path: '/extractor-iess', name: 'Extractor IESS', icon: <FileText size={18} /> },
         { path: '/validador-iess', name: 'Validador IESS vs Payroll', icon: <FileCheck size={18} /> },
         { path: '/bot-mail-liquidaciones', name: 'Bot Mail Liquidaciones', dbName: 'Mapeo de Cargos CCO', icon: <Mail size={18} /> },
+        { path: '/mantenimiento-cco', name: 'Catálogo CCO', dbName: 'Mantenimiento CCO', icon: <FileText size={18} /> },
       ]
     },
     {
