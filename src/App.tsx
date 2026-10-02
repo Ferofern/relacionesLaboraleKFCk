@@ -52,7 +52,7 @@ function App() {
           
           <Route path="extractor-iess" element={<ProtectedRoute moduleName="Extractor IESS"><ExtractorIess /></ProtectedRoute>} />
           <Route path="validador-iess" element={<ProtectedRoute moduleName="Validador IESS vs Payroll"><ValidadorIess /></ProtectedRoute>} />
-          <Route path="bot-mail-liquidaciones" element={<ProtectedRoute moduleName="Bot Mail Liquidaciones"><MapeoCCO /></ProtectedRoute>} />
+          <Route path="bot-mail-liquidaciones" element={<ProtectedRoute moduleName="Mapeo de Cargos CCO"><MapeoCCO /></ProtectedRoute>} />
           
           <Route path="extractor-facturas" element={<ProtectedRoute moduleName="Extractor de Facturas"><ExtractorFacturas /></ProtectedRoute>} />
           <Route path="generador-stickers" element={<ProtectedRoute moduleName="Generador de Stickers"><GeneradorStickers /></ProtectedRoute>} />
