@@ -3,30 +3,45 @@ import { FormInput, Download, CheckCircle2, Clock, Users } from 'lucide-react';
 import { mediator } from '../services/api';
 
 export default function VisorFormularios() {
-  const [formType, setFormType] = useState('Actualización Académica');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
-  }, [formType]);
+  }, []);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
       const res = await mediator.obtener_actualizacion_academica();
-      // Verificamos que la respuesta tenga la estructura esperada
-      if (res && res.kpis && res.data) {
-        setData(res);
+      
+      // Aseguramos de que si el backend manda un array plano o un objeto con "data", lo procesamos correctamente.
+      const arrayData = Array.isArray(res) ? res : (res?.data || []);
+      
+      if (arrayData.length > 0 || Array.isArray(res)) {
+        // Calcular KPIs dinámicamente usando los campos de la BD (estado_estudios)
+        const total = arrayData.length;
+        // Se asume que el estado indica culminación con ciertas palabras clave.
+        const culminados = arrayData.filter((item: any) => 
+          item.estado_estudios === 'Culminado' || 
+          item.estado_estudios === 'Graduado' || 
+          item.estado_estudios === 'Finalizado'
+        ).length;
+        const enCurso = total - culminados;
+
+        setData({
+          kpis: { total, culminados, enCurso },
+          data: arrayData
+        });
       } else {
-        // Mock data temporal si el backend no retorna la estructura correcta
+        // Mock data temporal si el backend no retorna la estructura correcta o está vacío
         setData({
           kpis: { total: 0, culminados: 0, enCurso: 0 },
           data: []
         });
-        console.warn("El backend no retornó la estructura esperada para Visor Formularios", res);
+        console.warn("El backend retornó una respuesta vacía o inesperada para Visor Formularios", res);
       }
     } catch (err) {
       console.error(err);
@@ -46,19 +61,7 @@ export default function VisorFormularios() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-[var(--ink)]">Visor de Formularios</h2>
-          <p className="text-[var(--muted)] mt-1">Consulta el estado de los formularios enviados por los colaboradores.</p>
-        </div>
-        <div className="w-full md:w-64">
-          <label className="block text-xs font-semibold text-[var(--muted)] mb-1 uppercase tracking-wider">Seleccionar Formulario</label>
-          <select 
-            value={formType}
-            onChange={e => setFormType(e.target.value)}
-            className="w-full border border-[var(--line)] rounded-lg px-4 py-2 text-sm outline-none focus:border-[var(--cyan)] bg-white font-medium"
-          >
-            <option>Actualización Académica</option>
-            <option>Evaluación de Desempeño</option>
-            <option>Solicitud de Vacaciones</option>
-          </select>
+          <p className="text-[var(--muted)] mt-1">Consulta el estado de los formularios de Actualización Académica.</p>
         </div>
       </div>
 
@@ -118,24 +121,31 @@ export default function VisorFormularios() {
                 </button>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+                <table className="w-full text-sm text-left whitespace-nowrap">
                   <thead className="text-xs text-[var(--muted)] uppercase bg-white border-b border-[var(--line)]">
                     <tr>
-                      <th className="px-6 py-3 font-semibold">ID</th>
+                      <th className="px-6 py-3 font-semibold">Cédula</th>
                       <th className="px-6 py-3 font-semibold">Empleado</th>
-                      <th className="px-6 py-3 font-semibold">Fecha</th>
-                      <th className="px-6 py-3 font-semibold text-center">Estado</th>
+                      <th className="px-6 py-3 font-semibold">Área / Marca</th>
+                      <th className="px-6 py-3 font-semibold">Fecha Registro</th>
+                      <th className="px-6 py-3 font-semibold text-center">Estado de Estudios</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.data.map((item: any, i: number) => (
                       <tr key={i} className="border-b border-[var(--line)] hover:bg-[var(--paper)] transition-colors">
-                        <td className="px-6 py-4 font-medium text-[var(--muted)]">#{item.id}</td>
-                        <td className="px-6 py-4 font-bold text-[var(--ink)]">{item.empleado}</td>
-                        <td className="px-6 py-4 text-[var(--muted)]">{item.fecha}</td>
+                        <td className="px-6 py-4 font-medium text-[var(--muted)]">{item.cedula}</td>
+                        <td className="px-6 py-4 font-bold text-[var(--ink)]">{item.nombre_completo}</td>
+                        <td className="px-6 py-4 text-[var(--muted)]">{item.area_o_marca}</td>
+                        <td className="px-6 py-4 text-[var(--muted)]">
+                          {item.created_at ? new Date(item.created_at).toLocaleDateString() : '-'}
+                        </td>
                         <td className="px-6 py-4 text-center">
-                          <span className={`score-pill ${item.estado !== 'Culminado' ? 'empty' : ''}`}>
-                            {item.estado}
+                          <span className={`score-pill ${
+                            (item.estado_estudios === 'Culminado' || item.estado_estudios === 'Graduado' || item.estado_estudios === 'Finalizado') 
+                              ? '' : 'empty'
+                          }`}>
+                            {item.estado_estudios || 'Desconocido'}
                           </span>
                         </td>
                       </tr>
