@@ -33,16 +33,21 @@ export default function VisorFormularios() {
         arrayData = arrayData.map((item: any) => {
           let materiasParsed = item.materias;
           try {
-            if (item.materias && typeof item.materias === 'string' && item.materias.startsWith('[')) {
-              const parsed = JSON.parse(item.materias);
-              materiasParsed = Array.isArray(parsed) ? parsed.join(', ') : parsed;
+            if (Array.isArray(item.materias)) {
+              materiasParsed = item.materias.join(', ');
+            } else if (item.materias && typeof item.materias === 'string') {
+              // Intenta parsear si es un string que parece array JSON
+              if (item.materias.trim().startsWith('[')) {
+                const parsed = JSON.parse(item.materias);
+                materiasParsed = Array.isArray(parsed) ? parsed.join(', ') : parsed;
+              }
             }
           } catch(e) {
              // Fallback to original if parse fails
           }
           return {
             ...item,
-            materias: materiasParsed
+            materias: String(materiasParsed || '')
           };
         });
         setData(arrayData);
