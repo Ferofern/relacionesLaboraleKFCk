@@ -12,7 +12,7 @@ export default function MapeoCCO() {
   const [result, setResult] = useState<any>(null);
 
   const processCco = async () => {
-    if (!cco || !cedula || !fecha) return;
+    if (!cco || !cedula || !nombre || !fecha) return;
     
     setIsProcessing(true);
     try {
@@ -69,7 +69,7 @@ export default function MapeoCCO() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--ink)] mb-1">NOMBRE (Opcional)</label>
+              <label className="block text-sm font-medium text-[var(--ink)] mb-1">NOMBRES COMPLETOS *</label>
               <input 
                 type="text" 
                 value={nombre}
@@ -93,7 +93,7 @@ export default function MapeoCCO() {
         <div className="p-4 border-t border-[var(--line)] flex justify-end bg-[var(--paper)]">
           <button 
             onClick={processCco}
-            disabled={isProcessing || !cco || !cedula || !fecha}
+            disabled={isProcessing || !cco || !cedula || !nombre || !fecha}
             className="generate-btn text-white px-6 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
           >
             {isProcessing ? 'Procesando...' : 'Generar Correo'}

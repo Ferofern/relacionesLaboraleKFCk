@@ -42,7 +42,7 @@ export default function ExtractorIess() {
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-2xl font-bold text-[var(--ink)]">Extractor IESS</h2>
+          <h2 className="text-2xl font-bold text-[var(--ink)]">EXTRACTOR IESS TP</h2>
           <p className="text-[var(--muted)] mt-1">Procesamiento y extracción de datos desde PDFs del IESS.</p>
         </div>
       </div>
