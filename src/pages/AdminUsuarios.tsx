@@ -210,7 +210,7 @@ export default function AdminUsuarios() {
                   <label className="block text-sm font-medium mb-1">Usuario</label>
                   <select required value={accesoForm.usuario_id} onChange={e => setAccesoForm({...accesoForm, usuario_id: e.target.value})} className="w-full p-2 border rounded-lg bg-white outline-none">
                     <option value="">Seleccione...</option>
-                    {catalogos.usuarios.map((u: any) => <option key={u.id} value={u.id}>{u.nombre}</option>)}
+                    {[...catalogos.usuarios].sort((a: any, b: any) => a.nombre.localeCompare(b.nombre)).map((u: any) => <option key={u.id} value={u.id}>{u.nombre}</option>)}
                   </select>
                 </div>
                 <div>
