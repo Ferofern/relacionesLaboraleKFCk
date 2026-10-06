@@ -47,7 +47,7 @@ export default function AdminUsuarios() {
   const handleCrearUsuario = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await mediator.crear_usuario({ ...nuevoUser, password_hash: btoa(nuevoUser.password) }); // Mock hash
+      await mediator.crear_usuario({ ...nuevoUser, password_hash: nuevoUser.password }); // Se envia el hash directamente
       setUserSuccess(true);
       setNuevoUser({ correo: '', password: '', nombre: '' });
       setTimeout(() => setUserSuccess(false), 3000);
@@ -183,8 +183,8 @@ export default function AdminUsuarios() {
               <input required type="email" value={nuevoUser.correo} onChange={e => setNuevoUser({...nuevoUser, correo: e.target.value})} className="w-full p-2 border rounded-lg outline-none focus:border-[var(--cyan)]" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Contraseña (hash se generará)</label>
-              <input required type="password" value={nuevoUser.password} onChange={e => setNuevoUser({...nuevoUser, password: e.target.value})} className="w-full p-2 border rounded-lg outline-none focus:border-[var(--cyan)]" />
+              <label className="block text-sm font-medium mb-1">Hash de Contraseña</label>
+              <input required type="text" value={nuevoUser.password} onChange={e => setNuevoUser({...nuevoUser, password: e.target.value})} className="w-full p-2 border rounded-lg outline-none focus:border-[var(--cyan)]" />
             </div>
             
             {userSuccess && (
