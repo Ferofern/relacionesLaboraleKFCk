@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api-proxy/:path*",
-      "destination": "https://kfc-3.onrender.com/api/:path*"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
