@@ -256,40 +256,35 @@ export const mediator = {
   // 99. Módulo Administrador de Accesos
   // ==========================================
   obtener_catalogos_admin: async () => {
-    return {
-      apps: ['utilitarios', 'cfcInduccionCorporativa', 'agenda'],
-      roles: ['Creador', 'Aprobador', 'Usuario', 'CFCCosta', 'Analista', 'supervisor'],
-      modulos_por_app: {
-        'utilitarios': ['Extractor IESS', 'Validador IESS vs Payroll', 'Mapeo de Cargos CCO', 'Extractor de Facturas', 'Generador de Claquetas', 'Generador de Stickers', 'Generador de Dotaciones', 'Gestion de Proyectos', 'Dashboard de Metricas', 'Pedir Suministros', 'Reporte de Suministros', 'Visor de Formularios', 'Mantenimiento CCO', 'Administrar Usuarios'],
-        'cfcInduccionCorporativa': ['inducciones', 'reportes'],
-        'agenda': ['KFC', 'CAR', 'Menestras del Negro', 'Aeropuerto', 'Cajun', 'American Deli', 'Dolce Incontro y Il Cappo']
-      },
-      usuarios: [
-        { id: 1, nombre: 'Felix Romero' },
-        { id: 2, nombre: 'Juan Perez' },
-        { id: 7, nombre: 'Maria Lopez' },
-        { id: 15, nombre: 'Carlos Silva' }
-      ]
-    };
+    const res = await fetch(`${API_URL}/api/admin/catalogos`);
+    if (!res.ok) throw new Error('Error obteniendo catálogos');
+    return res.json();
   },
   
   obtener_usuarios_accesos: async () => {
-    return [
-      { id: 1, usuario_id: 1, nombre_usuario: 'Felix Romero', correo: 'felix@kfc.com.ec', nombre_app: 'utilitarios', rol: 'Creador', modulos: 'Extractor IESS, Generador de Stickers, Pedir Suministros' },
-      { id: 2, usuario_id: 2, nombre_usuario: 'Juan Perez', correo: 'juan@kfc.com.ec', nombre_app: 'utilitarios', rol: 'Aprobador', modulos: 'Extractor IESS, Mapeo de Cargos CCO, Pedir Suministros' },
-      { id: 7, usuario_id: 7, nombre_usuario: 'Maria Lopez', correo: 'maria@kfc.com.ec', nombre_app: 'cfcInduccionCorporativa', rol: 'CFCCosta', modulos: 'inducciones, reportes' },
-      { id: 15, usuario_id: 15, nombre_usuario: 'Carlos Silva', correo: 'carlos@kfc.com.ec', nombre_app: 'agenda', rol: 'usuario', modulos: 'KFC' },
-    ];
+    const res = await fetch(`${API_URL}/api/admin/accesos`);
+    if (!res.ok) throw new Error('Error obteniendo accesos');
+    return res.json();
   },
   
   crear_usuario: async (payload: { correo: string, password_hash: string, nombre: string }) => {
-    console.log("Creando usuario", payload);
-    return { id: Math.floor(Math.random() * 1000), ...payload };
+    const res = await fetch(`${API_URL}/api/admin/usuarios`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Error creando usuario');
+    return res.json();
   },
   
   asignar_accesos: async (payload: { usuario_id: number, nombre_app: string, rol: string, modulos: string }) => {
-    console.log("Asignando accesos", payload);
-    return { id: Math.floor(Math.random() * 1000), ...payload };
+    const res = await fetch(`${API_URL}/api/admin/accesos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Error asignando accesos');
+    return res.json();
   },
 
   // ==========================================
