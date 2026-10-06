@@ -13,6 +13,7 @@ import DashboardMetricas from './pages/DashboardMetricas';
 import PedirSuministros from './pages/PedirSuministros';
 import ReportesSuministros from './pages/ReportesSuministros';
 import VisorFormularios from './pages/VisorFormularios';
+import AdminUsuarios from './pages/AdminUsuarios';
 import Login from './pages/Login';
 
 // Componente para proteger las rutas basado en los módulos autorizados del usuario
@@ -65,6 +66,7 @@ function App() {
           
           <Route path="gestion-proyectos" element={<ProtectedRoute moduleName="Gestion de Proyectos"><GestionProyectos /></ProtectedRoute>} />
           <Route path="visor-formularios" element={<ProtectedRoute moduleName="Visor de Formularios"><VisorFormularios /></ProtectedRoute>} />
+          <Route path="admin-usuarios" element={<ProtectedRoute moduleName="Administrar Usuarios"><AdminUsuarios /></ProtectedRoute>} />
           
           <Route path="dashboard" element={<ProtectedRoute moduleName="Dashboard de Metricas"><DashboardMetricas /></ProtectedRoute>} />
           

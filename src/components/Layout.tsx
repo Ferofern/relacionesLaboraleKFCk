@@ -66,6 +66,12 @@ export default function Layout() {
       items: [
         { path: '/dashboard', name: 'Dashboard Métricas', dbName: 'Dashboard de Metricas', icon: <BarChart3 size={18} /> },
       ]
+    },
+    {
+      category: 'Gestión Interna',
+      items: [
+        { path: '/admin-usuarios', name: 'Administrar Usuarios', dbName: 'Administrar Usuarios', icon: <UserIcon size={18} /> },
+      ]
     }
   ];
 
