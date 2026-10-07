@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { FileText, Download, Receipt, X } from 'lucide-react';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 import { mediator } from '../services/api';
 
 export default function ExtractorFacturas() {
@@ -7,13 +9,17 @@ export default function ExtractorFacturas() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
 
   const processFiles = async () => {
     if (files.length === 0) return;
     setIsProcessing(true);
     try {
-      const data = await mediator.process_facturas_files(files);
+      const data = await mediator.process_facturas_files(files, { usuario_id: user?.id || 0, proyecto_id: 3, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
+      resetTimer();
     } finally {
       setIsProcessing(false);
     }

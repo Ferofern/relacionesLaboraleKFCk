@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, Shirt, Download } from 'lucide-react';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 import { mediator } from '../services/api';
 
 export default function GeneradorDotaciones() {
@@ -12,13 +14,17 @@ export default function GeneradorDotaciones() {
 
   const refLeccionario = useRef<HTMLInputElement>(null);
   const refStocks = useRef<HTMLInputElement>(null);
+  
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
 
   const processFiles = async () => {
     if (!leccionario || !stocks || !fecha) return;
     setIsProcessing(true);
     try {
-      const data = await mediator.process_dotacion_files(negocio, leccionario, stocks, fecha);
+      const data = await mediator.process_dotacion_files(negocio, leccionario, stocks, fecha, { usuario_id: user?.id || 0, proyecto_id: 4, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
+      resetTimer();
     } finally {
       setIsProcessing(false);
     }

@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, File, CheckCircle2, Download, X } from 'lucide-react';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 import { mediator } from '../services/api';
 
 export default function ExtractorIess() {
@@ -8,6 +10,9 @@ export default function ExtractorIess() {
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -31,8 +36,9 @@ export default function ExtractorIess() {
     setIsProcessing(true);
     setProgress(0);
     try {
-      const data = await mediator.process_iess_files(files, setProgress);
+      const data = await mediator.process_iess_files(files, setProgress, { usuario_id: user?.id || 0, proyecto_id: 1, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
+      resetTimer();
     } finally {
       setIsProcessing(false);
     }

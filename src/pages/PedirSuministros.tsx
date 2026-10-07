@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { mediator, API_URL } from '../services/api';
 import { ShoppingCart, CheckCircle, Plus, Trash2, X } from 'lucide-react';
 import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 
 function ProductoCard({ item, onAdd }: { item: any, onAdd: (nombre: string, cantidad: number) => void }) {
   const [variante, setVariante] = useState(item.variantes && item.variantes.length > 0 ? item.variantes[0] : item.nombre);
@@ -55,6 +56,7 @@ function ProductoCard({ item, onAdd }: { item: any, onAdd: (nombre: string, cant
 
 export default function PedirSuministros() {
   const user = useAppStore(state => state.user);
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
   
   const [catalogo, setCatalogo] = useState<any[]>([]);
   const [carrito, setCarrito] = useState<{ [key: string]: number }>({});
@@ -117,8 +119,9 @@ export default function PedirSuministros() {
     const items = Object.entries(carrito).map(([nombre, cantidad]) => ({ nombre, cantidad }));
     if (items.length === 0) return alert('El carrito está vacío');
     try {
-      await mediator.guardar_pedido(items, correo, nombre);
+      await mediator.guardar_pedido(items, correo, nombre, { usuario_id: user?.id || 0, proyecto_id: 8, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setYaHizoPedido(true);
+      resetTimer();
     } catch (e) {
       alert('Error al guardar el pedido');
     }

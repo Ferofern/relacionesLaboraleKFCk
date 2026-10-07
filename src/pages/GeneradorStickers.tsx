@@ -2,8 +2,10 @@ import { useState, useRef } from 'react';
 import { Upload, Plus, Trash2, Download, Tag } from 'lucide-react';
 import { mediator } from '../services/api';
 import { useAppStore } from '../store';
-
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 export default function GeneradorStickers() {
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
   const { stickersData, addSticker, removeSticker, clearStickers } = useAppStore();
   const [baseLoaded, setBaseLoaded] = useState(false);
   const [formato, setFormato] = useState('Costa');
@@ -32,7 +34,8 @@ export default function GeneradorStickers() {
   const generatePDF = async () => {
     setIsProcessing(true);
     try {
-      await mediator.generate_stickers(stickersData.map(s => s.cedula), formato);
+      await mediator.generate_stickers(stickersData.map(s => s.cedula), formato, { usuario_id: user?.id || 0, proyecto_id: 5, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      resetTimer();
     } finally {
       setIsProcessing(false);
     }

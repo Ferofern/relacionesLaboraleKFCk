@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, FileSpreadsheet, FileText, Download, Activity, Check, AlertCircle } from 'lucide-react';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 import { mediator } from '../services/api';
 
 export default function ValidadorIess() {
@@ -11,13 +13,17 @@ export default function ValidadorIess() {
   
   const payrollInputRef = useRef<HTMLInputElement>(null);
   const iessInputRef = useRef<HTMLInputElement>(null);
+  
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
 
   const processValidation = async () => {
     if (!payrollFile || iessFiles.length === 0) return;
     setIsProcessing(true);
     try {
-      const data = await mediator.process_validador_files(payrollFile, iessFiles, setProgress);
+      const data = await mediator.process_validador_files(payrollFile, iessFiles, setProgress, { usuario_id: user?.id || 0, proyecto_id: 2, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
+      resetTimer();
     } finally {
       setIsProcessing(false);
     }

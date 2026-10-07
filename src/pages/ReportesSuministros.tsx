@@ -4,8 +4,12 @@ import { FileText, Users, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 
 export default function ReportesSuministros() {
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
   const [mes, setMes] = useState(new Date().getMonth() + 1 + '');
   const [anio, setAnio] = useState(new Date().getFullYear() + '');
   const [reporteGeneral, setReporteGeneral] = useState<any[]>([]);
@@ -21,12 +25,13 @@ export default function ReportesSuministros() {
     setLoading(true);
     try {
       const [general, persona] = await Promise.all([
-        mediator.obtener_reporte_general_articulos(mes, anio),
-        mediator.obtener_reporte_por_persona(mes, anio).catch(e => {
+        mediator.obtener_reporte_general_articulos(mes, anio, { usuario_id: user?.id || 0, proyecto_id: 9, tiempo_interaccion_segundos: getTiempoInteraccion() }),
+        mediator.obtener_reporte_por_persona(mes, anio, { usuario_id: user?.id || 0, proyecto_id: 9, tiempo_interaccion_segundos: getTiempoInteraccion() }).catch(e => {
           console.warn('Error backend reporte persona, asegurese de solucionar el problema del Timestamp:', e);
           return []; // fallback if it fails
         })
       ]);
+      resetTimer();
       setReporteGeneral(general);
       setReportePersona(persona);
       

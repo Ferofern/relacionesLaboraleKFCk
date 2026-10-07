@@ -34,9 +34,14 @@ export const mediator = {
   // ==========================================
   // 1. Módulo IESS (Extracción)
   // ==========================================
-  process_iess_files: async (files: File[], onProgress: (p: number) => void) => {
+  process_iess_files: async (files: File[], onProgress: (p: number) => void, telemetria?: any) => {
     const formData = new FormData();
     files.forEach(f => formData.append('archivos', f));
+    if (telemetria) {
+      formData.append('usuario_id', telemetria.usuario_id);
+      formData.append('proyecto_id', telemetria.proyecto_id);
+      formData.append('tiempo_interaccion_segundos', telemetria.tiempo_interaccion_segundos);
+    }
     onProgress(50);
     const res = await fetch(`${API_URL}/api/iess/extraer`, { method: 'POST', body: formData });
     onProgress(100);
@@ -49,10 +54,15 @@ export const mediator = {
   // ==========================================
   // 2. Módulo Validador (Comparador IESS vs Payroll)
   // ==========================================
-  process_validador_files: async (payroll: File, iessFiles: File[], onProgress: (p: number) => void) => {
+  process_validador_files: async (payroll: File, iessFiles: File[], onProgress: (p: number) => void, telemetria?: any) => {
     const formData = new FormData();
     formData.append('archivo_payroll', payroll);
     iessFiles.forEach(f => formData.append('archivos_iess', f));
+    if (telemetria) {
+      formData.append('usuario_id', telemetria.usuario_id);
+      formData.append('proyecto_id', telemetria.proyecto_id);
+      formData.append('tiempo_interaccion_segundos', telemetria.tiempo_interaccion_segundos);
+    }
     onProgress(50);
     const res = await fetch(`${API_URL}/api/validador/comparar`, { method: 'POST', body: formData });
     onProgress(100);
@@ -65,9 +75,14 @@ export const mediator = {
   // ==========================================
   // 3. Módulo Facturas
   // ==========================================
-  process_facturas_files: async (files: File[]) => {
+  process_facturas_files: async (files: File[], telemetria?: any) => {
     const formData = new FormData();
     files.forEach(f => formData.append('archivos', f));
+    if (telemetria) {
+      formData.append('usuario_id', telemetria.usuario_id);
+      formData.append('proyecto_id', telemetria.proyecto_id);
+      formData.append('tiempo_interaccion_segundos', telemetria.tiempo_interaccion_segundos);
+    }
     const res = await fetch(`${API_URL}/api/facturas/extraer`, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Error procesando facturas');
     const blob = await res.blob();
@@ -78,12 +93,17 @@ export const mediator = {
   // ==========================================
   // 5. Módulo Dotaciones
   // ==========================================
-  process_dotacion_files: async (tipo: string, leccionario: File, stocks: File, fecha: string) => {
+  process_dotacion_files: async (tipo: string, leccionario: File, stocks: File, fecha: string, telemetria?: any) => {
     const formData = new FormData();
     formData.append('leccionario', leccionario);
     formData.append('stocks', stocks);
     formData.append('fecha', fecha);
     formData.append('tipo_facturacion', tipo);
+    if (telemetria) {
+      formData.append('usuario_id', telemetria.usuario_id);
+      formData.append('proyecto_id', telemetria.proyecto_id);
+      formData.append('tiempo_interaccion_segundos', telemetria.tiempo_interaccion_segundos);
+    }
     const res = await fetch(`${API_URL}/api/dotaciones/generar`, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Error generando dotaciones');
     const blob = await res.blob();
@@ -94,7 +114,7 @@ export const mediator = {
   // ==========================================
   // 6. Módulo Stickers
   // ==========================================
-  generate_stickers: async (cedulas: string[], formato: string) => {
+  generate_stickers: async (cedulas: string[], formato: string, telemetria?: any) => {
     const formData = new FormData();
     
     // Construir el array de objetos completo que necesita el backend
@@ -114,6 +134,11 @@ export const mediator = {
 
     formData.append('seleccionados', JSON.stringify(empleadosCompletos));
     formData.append('region', formato); 
+    if (telemetria) {
+      formData.append('usuario_id', telemetria.usuario_id);
+      formData.append('proyecto_id', telemetria.proyecto_id);
+      formData.append('tiempo_interaccion_segundos', telemetria.tiempo_interaccion_segundos);
+    }
     const res = await fetch(`${API_URL}/api/stickers/generar`, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Error generando stickers');
     const blob = await res.blob();
@@ -162,13 +187,18 @@ export const mediator = {
     return res.json();
   },
 
-  procesar_cco: async (cco: string, cedula_ex: string, nombre_ex: string, fecha_liq: string) => {
-    const payload = {
+  procesar_cco: async (cco: string, cedula_ex: string, nombre_ex: string, fecha_liq: string, telemetria?: any) => {
+    const payload: any = {
       cco,
       cedula_ex,
       nombre_ex,
       fecha_liq
     };
+    if (telemetria) {
+      payload.usuario_id = telemetria.usuario_id;
+      payload.proyecto_id = telemetria.proyecto_id;
+      payload.tiempo_interaccion_segundos = telemetria.tiempo_interaccion_segundos;
+    }
     const res = await fetch(`${API_URL}/api/cco/procesar`, { 
       method: 'POST', 
       headers: { 'Content-Type': 'application/json' },
@@ -184,9 +214,14 @@ export const mediator = {
     return res.json();
   },
 
-  actualizar_catalogo_cco: async (archivo: File) => {
+  actualizar_catalogo_cco: async (archivo: File, telemetria?: any) => {
     const formData = new FormData();
     formData.append('archivo', archivo);
+    if (telemetria) {
+      formData.append('usuario_id', telemetria.usuario_id);
+      formData.append('proyecto_id', telemetria.proyecto_id);
+      formData.append('tiempo_interaccion_segundos', telemetria.tiempo_interaccion_segundos);
+    }
     const res = await fetch(`${API_URL}/api/cco/catalogo/actualizar`, { method: 'POST', body: formData });
     if (!res.ok) throw new Error('Error actualizando el catálogo CCO');
     return res.json();
@@ -209,13 +244,18 @@ export const mediator = {
     return data.existe;
   },
 
-  guardar_pedido: async (carrito: any[], correo: string = 'test@kfc.com.ec', nombre: string = 'Test Usuario') => {
+  guardar_pedido: async (carrito: any[], correo: string = 'test@kfc.com.ec', nombre: string = 'Test Usuario', telemetria?: any) => {
     const mes = new Date().getMonth() + 1;
     const anio = new Date().getFullYear();
-    const payload = {
+    const payload: any = {
       correo, nombre, mes, anio,
       carrito: carrito.reduce((acc, curr) => ({ ...acc, [curr.nombre]: curr.cantidad }), {})
     };
+    if (telemetria) {
+      payload.usuario_id = telemetria.usuario_id;
+      payload.proyecto_id = telemetria.proyecto_id;
+      payload.tiempo_interaccion_segundos = telemetria.tiempo_interaccion_segundos;
+    }
     const res = await fetch(`${API_URL}/api/suministros/pedido`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -225,15 +265,23 @@ export const mediator = {
     return res.json();
   },
 
-  obtener_reporte_general_articulos: async (mes: string, anio: string) => {
-    const res = await fetch(`${API_URL}/api/suministros/reportes/general?mes=${mes}&anio=${anio}`);
+  obtener_reporte_general_articulos: async (mes: string, anio: string, telemetria?: any) => {
+    let url = `${API_URL}/api/suministros/reportes/general?mes=${mes}&anio=${anio}`;
+    if (telemetria) {
+      url += `&usuario_id=${telemetria.usuario_id}&proyecto_id=${telemetria.proyecto_id}&tiempo_interaccion_segundos=${telemetria.tiempo_interaccion_segundos}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) throw new Error('Error obteniendo reporte');
     const data = await res.json();
     return data.map((d: any) => ({ articulo: d.Articulo, cantidad: d['Cantidad Total Pedida'] }));
   },
 
-  obtener_reporte_por_persona: async (mes: string, anio: string) => {
-    const res = await fetch(`${API_URL}/api/suministros/reportes/persona?mes=${mes}&anio=${anio}`);
+  obtener_reporte_por_persona: async (mes: string, anio: string, telemetria?: any) => {
+    let url = `${API_URL}/api/suministros/reportes/persona?mes=${mes}&anio=${anio}`;
+    if (telemetria) {
+      url += `&usuario_id=${telemetria.usuario_id}&proyecto_id=${telemetria.proyecto_id}&tiempo_interaccion_segundos=${telemetria.tiempo_interaccion_segundos}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) throw new Error('Error obteniendo reporte por persona');
     return await res.json();
   },

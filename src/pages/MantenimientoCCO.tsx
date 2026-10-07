@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { Upload, CheckCircle2 } from 'lucide-react';
 import { mediator } from '../services/api';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 
 export default function MantenimientoCCO() {
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -13,9 +17,10 @@ export default function MantenimientoCCO() {
     setIsProcessing(true);
     setSuccess(false);
     try {
-      await mediator.actualizar_catalogo_cco(file);
+      await mediator.actualizar_catalogo_cco(file, { usuario_id: user?.id || 0, proyecto_id: 7, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setSuccess(true);
       setFile(null);
+      resetTimer();
     } catch (error) {
       console.error(error);
       alert('Error al actualizar el catálogo. Verifica la consola o intenta de nuevo.');

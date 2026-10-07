@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
 import { mediator } from '../services/api';
+import { useAppStore } from '../store';
+import { useMetricasTiempo } from '../hooks/useMetricasTiempo';
 
 export default function MapeoCCO() {
+  const { user } = useAppStore();
+  const { getTiempoInteraccion, resetTimer } = useMetricasTiempo();
   const [cco, setCco] = useState('');
   const [cedula, setCedula] = useState('');
   const [nombre, setNombre] = useState('');
@@ -16,8 +20,9 @@ export default function MapeoCCO() {
     
     setIsProcessing(true);
     try {
-      const data = await mediator.procesar_cco(cco, cedula, nombre, fecha);
+      const data = await mediator.procesar_cco(cco, cedula, nombre, fecha, { usuario_id: user?.id || 0, proyecto_id: 6, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResult(data);
+      resetTimer();
       
       const to = data.to;
       const cc = data.cc;
