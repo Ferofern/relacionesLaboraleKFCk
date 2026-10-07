@@ -33,7 +33,7 @@ export default function Layout() {
     {
       category: 'Nómina e IESS',
       items: [
-        { path: '/extractor-iess', name: 'Extractor IESS', icon: <FileText size={18} /> },
+        { path: '/extractor-iess', name: 'Extraer IESS TP', dbName: 'Extractor IESS', icon: <FileText size={18} /> },
         { path: '/validador-iess', name: 'Validador IESS vs Payroll', icon: <FileCheck size={18} /> },
         { path: '/bot-mail-liquidaciones', name: 'Bot Mail Liquidaciones', dbName: 'Mapeo de Cargos CCO', icon: <Mail size={18} /> },
         { path: '/mantenimiento-cco', name: 'Catálogo CCO', dbName: 'Mantenimiento CCO', icon: <FileText size={18} /> },
@@ -42,7 +42,7 @@ export default function Layout() {
     {
       category: 'Documentos y Generadores',
       items: [
-        { path: '/extractor-facturas', name: 'Extractor Facturas', dbName: 'Extractor de Facturas', icon: <Receipt size={18} /> },
+        { path: '/extractor-facturas', name: 'Beneficios Facturas Internet en Casa', dbName: 'Extractor de Facturas', icon: <Receipt size={18} /> },
         { path: '/generador-stickers', name: 'Generador Stickers', dbName: 'Generador de Stickers', icon: <Tag size={18} /> },
         { path: '/generador-dotaciones', name: 'Generador Uniformes BOT SAP', dbName: 'Generador de Dotaciones', icon: <Shirt size={18} /> },
       ]
