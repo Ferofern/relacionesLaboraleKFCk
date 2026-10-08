@@ -9,6 +9,7 @@ export interface User {
   nombre: string;
   rol: Role;
   modulos: string[];
+  token?: string;
 }
 
 interface SuministroItem {

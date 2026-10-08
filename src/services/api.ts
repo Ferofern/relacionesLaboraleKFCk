@@ -1,5 +1,29 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+const getToken = () => {
+  const storeStr = localStorage.getItem('kfc-rrhh-storage');
+  if (storeStr) {
+    try {
+      const data = JSON.parse(storeStr);
+      return data?.state?.user?.token || '';
+    } catch (e) {}
+  }
+  return '';
+};
+
+const originalFetch = window.fetch;
+window.fetch = async (resource, config) => {
+  const token = getToken();
+  if (token && typeof resource === 'string' && resource.startsWith('http') && !resource.includes('/api/auth/login')) {
+    config = config || {};
+    config.headers = {
+      ...config.headers,
+      'Authorization': `Bearer ${token}`
+    };
+  }
+  return originalFetch(resource, config);
+};
+
 const downloadBlob = (blob: Blob, filename: string) => {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');

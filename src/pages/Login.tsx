@@ -26,6 +26,9 @@ export default function Login() {
     try {
       const response = await mediator.login(correo, password);
       if (response && response.user) {
+        if (response.access_token) {
+          response.user.token = response.access_token;
+        }
         setUser(response.user);
       }
     } catch (err: any) {
