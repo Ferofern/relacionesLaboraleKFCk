@@ -20,7 +20,7 @@ export default function MapeoCCO() {
     
     setIsProcessing(true);
     try {
-      const data = await mediator.procesar_cco(cco, cedula, nombre, fecha, { usuario_id: user?.id || 0, proyecto_id: 6, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      const data = await mediator.procesar_cco(cco, cedula, nombre, fecha, { usuario_id: user?.id || 0, proyecto_id: 103, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResult(data);
       resetTimer();
       

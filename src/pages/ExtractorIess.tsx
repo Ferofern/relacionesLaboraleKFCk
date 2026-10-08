@@ -36,7 +36,7 @@ export default function ExtractorIess() {
     setIsProcessing(true);
     setProgress(0);
     try {
-      const data = await mediator.process_iess_files(files, setProgress, { usuario_id: user?.id || 0, proyecto_id: 1, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      const data = await mediator.process_iess_files(files, setProgress, { usuario_id: user?.id || 0, proyecto_id: 101, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
       resetTimer();
     } finally {

@@ -17,7 +17,7 @@ export default function ExtractorFacturas() {
     if (files.length === 0) return;
     setIsProcessing(true);
     try {
-      const data = await mediator.process_facturas_files(files, { usuario_id: user?.id || 0, proyecto_id: 3, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      const data = await mediator.process_facturas_files(files, { usuario_id: user?.id || 0, proyecto_id: 105, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
       resetTimer();
     } finally {

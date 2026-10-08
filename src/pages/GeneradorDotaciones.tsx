@@ -22,7 +22,7 @@ export default function GeneradorDotaciones() {
     if (!leccionario || !stocks || !fecha) return;
     setIsProcessing(true);
     try {
-      const data = await mediator.process_dotacion_files(negocio, leccionario, stocks, fecha, { usuario_id: user?.id || 0, proyecto_id: 4, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      const data = await mediator.process_dotacion_files(negocio, leccionario, stocks, fecha, { usuario_id: user?.id || 0, proyecto_id: 107, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
       resetTimer();
     } finally {

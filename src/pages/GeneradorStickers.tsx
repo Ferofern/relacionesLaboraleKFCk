@@ -34,7 +34,7 @@ export default function GeneradorStickers() {
   const generatePDF = async () => {
     setIsProcessing(true);
     try {
-      await mediator.generate_stickers(stickersData.map(s => s.cedula), formato, { usuario_id: user?.id || 0, proyecto_id: 5, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      await mediator.generate_stickers(stickersData.map(s => s.cedula), formato, { usuario_id: user?.id || 0, proyecto_id: 106, tiempo_interaccion_segundos: getTiempoInteraccion() });
       resetTimer();
     } finally {
       setIsProcessing(false);

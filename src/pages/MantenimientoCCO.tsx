@@ -17,7 +17,7 @@ export default function MantenimientoCCO() {
     setIsProcessing(true);
     setSuccess(false);
     try {
-      await mediator.actualizar_catalogo_cco(file, { usuario_id: user?.id || 0, proyecto_id: 7, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      await mediator.actualizar_catalogo_cco(file, { usuario_id: user?.id || 0, proyecto_id: 104, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setSuccess(true);
       setFile(null);
       resetTimer();

@@ -119,7 +119,7 @@ export default function PedirSuministros() {
     const items = Object.entries(carrito).map(([nombre, cantidad]) => ({ nombre, cantidad }));
     if (items.length === 0) return alert('El carrito está vacío');
     try {
-      await mediator.guardar_pedido(items, correo, nombre, { usuario_id: user?.id || 0, proyecto_id: 8, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      await mediator.guardar_pedido(items, correo, nombre, { usuario_id: user?.id || 0, proyecto_id: 108, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setYaHizoPedido(true);
       resetTimer();
     } catch (e) {

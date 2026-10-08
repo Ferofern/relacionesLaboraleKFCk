@@ -21,7 +21,7 @@ export default function ValidadorIess() {
     if (!payrollFile || iessFiles.length === 0) return;
     setIsProcessing(true);
     try {
-      const data = await mediator.process_validador_files(payrollFile, iessFiles, setProgress, { usuario_id: user?.id || 0, proyecto_id: 2, tiempo_interaccion_segundos: getTiempoInteraccion() });
+      const data = await mediator.process_validador_files(payrollFile, iessFiles, setProgress, { usuario_id: user?.id || 0, proyecto_id: 102, tiempo_interaccion_segundos: getTiempoInteraccion() });
       setResults(data);
       resetTimer();
     } finally {

@@ -25,8 +25,8 @@ export default function ReportesSuministros() {
     setLoading(true);
     try {
       const [general, persona] = await Promise.all([
-        mediator.obtener_reporte_general_articulos(mes, anio, { usuario_id: user?.id || 0, proyecto_id: 9, tiempo_interaccion_segundos: getTiempoInteraccion() }),
-        mediator.obtener_reporte_por_persona(mes, anio, { usuario_id: user?.id || 0, proyecto_id: 9, tiempo_interaccion_segundos: getTiempoInteraccion() }).catch(e => {
+        mediator.obtener_reporte_general_articulos(mes, anio, { usuario_id: user?.id || 0, proyecto_id: 109, tiempo_interaccion_segundos: getTiempoInteraccion() }),
+        mediator.obtener_reporte_por_persona(mes, anio, { usuario_id: user?.id || 0, proyecto_id: 109, tiempo_interaccion_segundos: getTiempoInteraccion() }).catch(e => {
           console.warn('Error backend reporte persona, asegurese de solucionar el problema del Timestamp:', e);
           return []; // fallback if it fails
         })
