@@ -4,6 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 type Role = 'Administrador' | 'Aprobador' | 'Operador' | 'Usuario' | null;
 
 export interface User {
+  id?: number;
   correo: string;
   nombre: string;
   rol: Role;
