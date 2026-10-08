@@ -12,6 +12,7 @@ export default function GeneradorStickers() {
   const [cedulaInput, setCedulaInput] = useState('');
   const [masivoInput, setMasivoInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [archivo, setArchivo] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleAddIndividual = async () => {
@@ -41,6 +42,46 @@ export default function GeneradorStickers() {
     }
   };
 
+  const generarStickersMasivos = async () => {
+    if (!archivo || !formato) {
+      alert("Por favor selecciona un archivo y un formato (Costa/Sierra).");
+      return;
+    }
+    
+    setIsProcessing(true);
+    const formData = new FormData();
+    formData.append("archivo", archivo);
+    formData.append("region", formato);
+    formData.append("usuario_id", String(user?.id || 0));
+    formData.append("proyecto_id", "106");
+    formData.append("tiempo_interaccion_segundos", String(getTiempoInteraccion()));
+    
+    try {
+      const response = await fetch("https://kfc-3.onrender.com/api/stickers/generar-masivo", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("Error al generar stickers masivos");
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Stickers_Masivos.pdf";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      
+      resetTimer();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Hubo un problema al generar los stickers masivos directamente con el Excel.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-between items-end">
@@ -60,7 +101,9 @@ export default function GeneradorStickers() {
             >
               <input type="file" accept=".xlsx,.xls" className="hidden" ref={fileRef} onChange={async (e) => {
                 if (e.target.files && e.target.files[0]) {
-                  const data = await mediator.process_stickers_file(e.target.files[0]);
+                  const file = e.target.files[0];
+                  setArchivo(file);
+                  const data = await mediator.process_stickers_file(file);
                   setBaseLoaded(true);
                 }
               }} />
@@ -153,14 +196,23 @@ export default function GeneradorStickers() {
             )}
           </div>
 
-          <div className="p-4 border-t border-[var(--line)] bg-white">
+          <div className="p-4 border-t border-[var(--line)] bg-white flex flex-col gap-3">
             <button 
               onClick={generatePDF}
               disabled={stickersData.length === 0 || isProcessing}
               className="generate-btn download-all w-full flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-lg disabled:opacity-50 transition-colors shadow-md hover:shadow-lg"
             >
               <Download size={20} />
-              {isProcessing ? 'Generando PDF...' : 'Generar PDF de Stickers'}
+              {isProcessing ? 'Generando PDF...' : 'Generar PDF de Stickers (Lista)'}
+            </button>
+
+            <button 
+              onClick={generarStickersMasivos}
+              disabled={!archivo || isProcessing}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-lg bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 transition-colors shadow-md hover:shadow-lg"
+            >
+              <Download size={20} />
+              {isProcessing ? 'Generando Masivo...' : 'Generar Stickers Masivos (Excel Directo)'}
             </button>
           </div>
         </div>
