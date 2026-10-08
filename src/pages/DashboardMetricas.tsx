@@ -4,7 +4,7 @@ import { TrendingUp, Clock, Target, FileText } from 'lucide-react';
 import { mediator } from '../services/api';
 
 export default function DashboardMetricas() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any[]>([]);
   const [metrics, setMetrics] = useState<any>(null);
 
   useEffect(() => {
@@ -13,10 +13,35 @@ export default function DashboardMetricas() {
 
   const loadData = async () => {
     try {
-      const dashData = await mediator.obtener_dashboard_completo();
-      setData(dashData);
-      if (dashData.metrics) {
-        setMetrics(dashData.metrics);
+      const rawData = await mediator.obtener_dashboard_completo();
+      if (Array.isArray(rawData)) {
+        let totalAhorro = 0;
+        let totalAlcance = 0;
+        let avgOpt = 0;
+
+        const chartData = rawData.map((item: any) => {
+          const ahorroGlobal = item['Ahorro (h)'] * item['Frecuencia'];
+          totalAhorro += ahorroGlobal;
+          totalAlcance += item['Alcance'];
+          avgOpt += item['Optimizacion %'];
+          
+          return {
+            ...item,
+            ahorroGlobal: ahorroGlobal,
+            manual: item['Manual (h)'],
+            auto: item['App Promedio (h)']
+          };
+        });
+
+        if (rawData.length > 0) avgOpt /= rawData.length;
+
+        setMetrics({
+          ahorro: `${totalAhorro.toFixed(1)} h`,
+          optimizacion: `${avgOpt.toFixed(1)}%`,
+          alcance: totalAlcance
+        });
+
+        setData(chartData);
       }
     } catch (error) {
       console.error('Error loading dashboard data', error);
@@ -85,40 +110,74 @@ export default function DashboardMetricas() {
         </div>
       )}
 
-      {data && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-[var(--line)]">
-            <h3 className="font-bold text-[var(--ink)] mb-6 text-lg">Retorno de Inversión (ROI) por Área</h3>
-            <div className="h-80 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.roi} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} tickFormatter={(value) => `$${value}`} />
-                  <RechartsTooltip cursor={{ fill: 'var(--paper)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)', boxShadow: 'var(--shadow)' }} />
-                  <Bar dataKey="valor" fill="var(--cyan)" radius={[4, 4, 0, 0]} maxBarSize={60} />
-                </BarChart>
-              </ResponsiveContainer>
+      {data.length > 0 && (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-[var(--line)]">
+              <h3 className="font-bold text-[var(--ink)] mb-6 text-lg">Ahorro Histórico (h) por Módulo</h3>
+              <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                    <XAxis dataKey="Proyecto" axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)', fontSize: 12 }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
+                    <RechartsTooltip cursor={{ fill: 'var(--paper)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)', boxShadow: 'var(--shadow)' }} formatter={(value: any) => [`${Number(value).toFixed(2)} h`, 'Ahorro Histórico']} />
+                    <Bar name="Ahorro Histórico" dataKey="ahorroGlobal" fill="var(--cyan)" radius={[4, 4, 0, 0]} maxBarSize={60} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-[var(--line)]">
+              <h3 className="font-bold text-[var(--ink)] mb-6 text-lg">Tiempo Manual vs Automatizado (Horas)</h3>
+              <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+                    <XAxis dataKey="Proyecto" axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)', fontSize: 12 }} dy={10} />
+                    <YAxis scale="log" domain={['auto', 'auto']} axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
+                    <RechartsTooltip cursor={{ fill: 'var(--paper)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)' }} />
+                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                    <Bar name="Manual (h)" dataKey="manual" fill="var(--muted)" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar name="Automatizado (h)" dataKey="auto" fill="var(--cyan)" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-[var(--line)]">
-            <h3 className="font-bold text-[var(--ink)] mb-6 text-lg">Tiempo Manual vs Automatizado (Horas)</h3>
-            <div className="h-80 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.tiempos} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} dy={10} />
-                  <YAxis scale="log" domain={['dataMin', 'dataMax']} axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
-                  <RechartsTooltip cursor={{ fill: 'var(--paper)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)' }} />
-                  <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                  <Bar name="Tiempo Manual" dataKey="manual" fill="var(--muted)" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                  <Bar name="Tiempo Automatizado" dataKey="auto" fill="var(--cyan)" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                </BarChart>
-              </ResponsiveContainer>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-[var(--line)] overflow-hidden">
+            <h3 className="font-bold text-[var(--ink)] mb-4 text-lg">Tabla de Detalles de ROI</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-[var(--paper)] border-b border-[var(--line)]">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">Código</th>
+                    <th className="px-4 py-3 font-semibold">Proyecto</th>
+                    <th className="px-4 py-3 font-semibold">Frecuencia</th>
+                    <th className="px-4 py-3 font-semibold">Total Tx</th>
+                    <th className="px-4 py-3 font-semibold">Alcance</th>
+                    <th className="px-4 py-3 font-semibold">Ahorro (h)</th>
+                    <th className="px-4 py-3 font-semibold">Optimización</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, idx) => (
+                    <tr key={idx} className="border-b border-[var(--line)] hover:bg-[var(--paper)] transition-colors">
+                      <td className="px-4 py-3 font-medium text-gray-600">{item['Codigo']}</td>
+                      <td className="px-4 py-3 font-semibold text-[var(--ink)]">{item['Proyecto']}</td>
+                      <td className="px-4 py-3">{item['Frecuencia']}</td>
+                      <td className="px-4 py-3">{item['Total Transacciones']}</td>
+                      <td className="px-4 py-3">{item['Alcance']} usrs</td>
+                      <td className="px-4 py-3 text-green-600 font-medium">{item['Ahorro (h)']}</td>
+                      <td className="px-4 py-3 text-[var(--cyan)] font-medium">{item['Optimizacion %']}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
