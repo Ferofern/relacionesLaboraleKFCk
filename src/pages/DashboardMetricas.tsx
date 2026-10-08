@@ -28,8 +28,8 @@ export default function DashboardMetricas() {
           return {
             ...item,
             ahorroGlobal: ahorroGlobal,
-            manual: item['Manual (h)'],
-            auto: item['App Promedio (h)']
+            manual: item['Manual (h)'] > 0 ? item['Manual (h)'] : 0.0001,
+            auto: item['App Promedio (h)'] > 0 ? item['App Promedio (h)'] : 0.0001
           };
         });
 
@@ -154,7 +154,7 @@ export default function DashboardMetricas() {
                   <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
                     <XAxis dataKey="Proyecto" axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)', fontSize: 12 }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
+                    <YAxis scale="log" domain={[0.001, 'auto']} axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
                     <RechartsTooltip cursor={{ fill: 'var(--paper)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)' }} />
                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
                     <Bar name="Manual (h)" dataKey="manual" fill="var(--muted)" radius={[4, 4, 0, 0]} maxBarSize={40} />
