@@ -6,6 +6,7 @@ export default function GestionProyectos() {
   const [activeTab, setActiveTab] = useState<'crear' | 'revisar'>('crear');
   const [proyectos, setProyectos] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     codigo: '', nombre: '', solicitante: '', fechaInicio: '', fechaFin: '',
     prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: '',
@@ -15,6 +16,9 @@ export default function GestionProyectos() {
   useEffect(() => {
     if (activeTab === 'revisar') {
       loadProyectos();
+    } else if (activeTab === 'crear' && !editingId) {
+      // Limpiar formulario si se va a la pestaña de crear sin estar editando
+      setFormData({ codigo: '', nombre: '', solicitante: '', fechaInicio: '', fechaFin: '', prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: '', diccionario_datos: '', instructivo: '' });
     }
   }, [activeTab]);
 
@@ -26,8 +30,13 @@ export default function GestionProyectos() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await mediator.crear_proyecto(formData);
+    if (editingId) {
+      await mediator.actualizar_proyecto(editingId, formData);
+    } else {
+      await mediator.crear_proyecto(formData);
+    }
     setIsSubmitting(false);
+    setEditingId(null);
     setFormData({ codigo: '', nombre: '', solicitante: '', fechaInicio: '', fechaFin: '', prioridad: 'Media', tiempoEstimado: '', descripcion: '', uml: '', diccionario_datos: '', instructivo: '' });
     setActiveTab('revisar');
   };
@@ -56,6 +65,30 @@ export default function GestionProyectos() {
       console.error(error);
       alert("El backend aún no ha habilitado la generación de PDF para este proyecto o hubo un error en la red.");
     }
+  };
+
+  const handleEditClick = (p: any) => {
+    setFormData({
+      codigo: p.codigo || '',
+      nombre: p.nombre || '',
+      solicitante: p.solicitante || '',
+      fechaInicio: p.fechaInicio || '',
+      fechaFin: p.fechaFin || '',
+      prioridad: p.prioridad || 'Media',
+      tiempoEstimado: p.tiempoEstimado || '',
+      descripcion: p.descripcion || '',
+      uml: p.uml || '',
+      diccionario_datos: p.diccionario_datos || '',
+      instructivo: p.instructivo || ''
+    });
+    setEditingId(p.id);
+    setActiveTab('crear');
+  };
+
+  const getEmail = (nombre: string) => {
+    const n = nombre.toLowerCase();
+    if (n.includes('cfc')) return 'monica.erazo@kfc.com';
+    return 'gabriela.alvear@kfc.com.ec';
   };
 
   return (
@@ -147,7 +180,7 @@ export default function GestionProyectos() {
 
           <div className="flex justify-end pt-4 border-t border-[var(--line)]">
             <button type="submit" disabled={isSubmitting} className="generate-btn file-action text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 disabled:opacity-50 transition-colors">
-              <Briefcase size={18} /> {isSubmitting ? 'Guardando...' : 'Crear Proyecto'}
+              <Briefcase size={18} /> {isSubmitting ? 'Guardando...' : (editingId ? 'Actualizar Proyecto' : 'Crear Proyecto')}
             </button>
           </div>
         </form>
@@ -184,13 +217,13 @@ export default function GestionProyectos() {
                     <button onClick={() => handleApprove(p.id, p.estado)} className="p-2 text-[var(--muted)] hover:text-green-600 transition-colors" title="Cambiar Estado">
                       <CheckCircle size={18} />
                     </button>
-                    <button className="p-2 text-[var(--muted)] hover:text-[var(--cyan)] transition-colors" title="Editar">
+                    <button onClick={() => handleEditClick(p)} className="p-2 text-[var(--muted)] hover:text-[var(--cyan)] transition-colors" title="Editar">
                       <Edit size={18} />
                     </button>
                     <button onClick={() => handleDownloadPDF(p.id)} className="p-2 text-[var(--muted)] hover:text-blue-600 transition-colors" title="PDF Claqueta">
                       <FileText size={18} />
                     </button>
-                    <a href={`mailto:?subject=Aprobación Proyecto ${p.id}`} className="p-2 text-[var(--muted)] hover:text-orange-500 transition-colors" title="Enviar Correo">
+                    <a href={`mailto:${getEmail(p.nombre)}?subject=Aprobación Proyecto ${p.codigo || p.id}`} className="p-2 text-[var(--muted)] hover:text-orange-500 transition-colors" title="Enviar Correo">
                       <Send size={18} />
                     </a>
                   </td>
