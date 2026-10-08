@@ -55,7 +55,26 @@ export default function DashboardMetricas() {
           <h2 className="text-2xl font-bold text-[var(--ink)]">Dashboard de Métricas</h2>
           <p className="text-[var(--muted)] mt-1">Impacto y retorno de inversión de la automatización de procesos.</p>
         </div>
-        <button className="generate-btn flex items-center gap-2 px-6 py-2.5 bg-[var(--navy)] text-white rounded-lg text-sm font-semibold transition-colors hover:bg-[var(--cyan)] shadow-sm">
+        <button 
+          onClick={async () => {
+            try {
+              const response = await fetch("https://kfc-3.onrender.com/api/dashboard/reporte-pdf");
+              if (!response.ok) throw new Error("Error al descargar el reporte");
+              const blob = await response.blob();
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "Reporte_ROI.pdf";
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              a.remove();
+            } catch (err) {
+              alert("El backend aún no tiene listo este reporte o hubo un error.");
+            }
+          }}
+          className="generate-btn flex items-center gap-2 px-6 py-2.5 bg-[var(--navy)] text-white rounded-lg text-sm font-semibold transition-colors hover:bg-[var(--cyan)] shadow-sm"
+        >
           <FileText size={18} />
           <span>Generar Reporte Ejecutivo PDF</span>
         </button>
@@ -135,7 +154,7 @@ export default function DashboardMetricas() {
                   <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
                     <XAxis dataKey="Proyecto" axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)', fontSize: 12 }} dy={10} />
-                    <YAxis scale="log" domain={['auto', 'auto']} axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--muted)' }} />
                     <RechartsTooltip cursor={{ fill: 'var(--paper)' }} contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)' }} />
                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
                     <Bar name="Manual (h)" dataKey="manual" fill="var(--muted)" radius={[4, 4, 0, 0]} maxBarSize={40} />
@@ -169,8 +188,8 @@ export default function DashboardMetricas() {
                       <td className="px-4 py-3">{item['Frecuencia']}</td>
                       <td className="px-4 py-3">{item['Total Transacciones']}</td>
                       <td className="px-4 py-3">{item['Alcance']} usrs</td>
-                      <td className="px-4 py-3 text-green-600 font-medium">{item['Ahorro (h)']}</td>
-                      <td className="px-4 py-3 text-[var(--cyan)] font-medium">{item['Optimizacion %']}%</td>
+                      <td className="px-4 py-3 text-green-600 font-medium">{Number(item['Ahorro (h)']).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-[var(--cyan)] font-medium">{Number(item['Optimizacion %']).toFixed(2)}%</td>
                     </tr>
                   ))}
                 </tbody>

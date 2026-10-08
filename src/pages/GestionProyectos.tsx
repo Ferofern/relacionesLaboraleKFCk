@@ -38,6 +38,26 @@ export default function GestionProyectos() {
     loadProyectos();
   };
 
+  const handleDownloadPDF = async (id: string) => {
+    try {
+      const response = await fetch(`https://kfc-3.onrender.com/api/proyectos/${id}/pdf`);
+      if (!response.ok) throw new Error("Error al descargar el PDF de la claqueta");
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Claqueta_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error(error);
+      alert("El backend aún no ha habilitado la generación de PDF para este proyecto o hubo un error en la red.");
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
@@ -167,7 +187,7 @@ export default function GestionProyectos() {
                     <button className="p-2 text-[var(--muted)] hover:text-[var(--cyan)] transition-colors" title="Editar">
                       <Edit size={18} />
                     </button>
-                    <button className="p-2 text-[var(--muted)] hover:text-blue-600 transition-colors" title="PDF Claqueta">
+                    <button onClick={() => handleDownloadPDF(p.id)} className="p-2 text-[var(--muted)] hover:text-blue-600 transition-colors" title="PDF Claqueta">
                       <FileText size={18} />
                     </button>
                     <a href={`mailto:?subject=Aprobación Proyecto ${p.id}`} className="p-2 text-[var(--muted)] hover:text-orange-500 transition-colors" title="Enviar Correo">
