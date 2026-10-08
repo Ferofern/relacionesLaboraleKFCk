@@ -147,7 +147,7 @@ export default function PedirSuministros() {
     );
   }
 
-  const itemsEnCarrito = Object.entries(carrito);
+  const itemsEnCarrito = Object.entries(carrito).sort((a, b) => a[0].localeCompare(b[0]));
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
