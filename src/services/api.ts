@@ -196,12 +196,14 @@ export const mediator = {
     return res.ok;
   },
 
-  actualizar_estado: async (id: string, estado: string) => {
-    const formData = new FormData();
-    formData.append('estado', estado);
+  actualizar_estado: async (id: string, estado: string, aprobador?: string) => {
+    const payload: any = { estado };
+    if (aprobador) payload.aprobador = aprobador;
+
     const res = await fetch(`${API_URL}/api/proyectos/${id}/estado`, {
       method: 'PUT',
-      body: formData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
     return res.ok;
   },

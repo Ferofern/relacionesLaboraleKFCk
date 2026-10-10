@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { Briefcase, Image as ImageIcon, Send, FileText, CheckCircle, Edit, Search } from 'lucide-react';
 import { mediator } from '../services/api';
 
+import { useAppStore } from '../store';
+
 export default function GestionProyectos() {
+  const user = useAppStore(state => state.user);
   const [activeTab, setActiveTab] = useState<'crear' | 'revisar'>('crear');
   const [proyectos, setProyectos] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +46,7 @@ export default function GestionProyectos() {
 
   const handleApprove = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'Pendiente' ? 'Aprobado' : 'Pendiente';
-    await mediator.actualizar_estado(id, newStatus);
+    await mediator.actualizar_estado(id, newStatus, user?.nombre);
     loadProyectos();
   };
 
