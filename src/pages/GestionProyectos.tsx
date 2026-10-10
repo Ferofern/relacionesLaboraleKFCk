@@ -91,6 +91,20 @@ export default function GestionProyectos() {
     return 'gabriela.alvear@kfc.com.ec';
   };
 
+  const getMailtoLink = (p: any) => {
+    const to = getEmail(p.nombre);
+    const subject = encodeURIComponent(`Aprobación Proyecto ${p.codigo || p.id}`);
+    const body = encodeURIComponent(`Estimadas Monica y Gabriela,
+
+Adjunto la propuesta y claqueta del proyecto ${p.nombre} para su revisión y aprobación.
+Por favor, revisar el documento PDF adjuntado en este correo.
+
+Descripción del proyecto:
+${p.descripcion || 'Sin descripción detallada.'}
+`);
+    return `mailto:${to}?subject=${subject}&body=${body}`;
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
@@ -223,7 +237,7 @@ export default function GestionProyectos() {
                     <button onClick={() => handleDownloadPDF(p.id)} className="p-2 text-[var(--muted)] hover:text-blue-600 transition-colors" title="PDF Claqueta">
                       <FileText size={18} />
                     </button>
-                    <a href={`mailto:${getEmail(p.nombre)}?subject=Aprobación Proyecto ${p.codigo || p.id}`} className="p-2 text-[var(--muted)] hover:text-orange-500 transition-colors" title="Enviar Correo">
+                    <a href={getMailtoLink(p)} className="p-2 text-[var(--muted)] hover:text-orange-500 transition-colors" title="Enviar Correo">
                       <Send size={18} />
                     </a>
                   </td>
